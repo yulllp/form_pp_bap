@@ -9,12 +9,12 @@
 </head>
 
 <body>
-	<section class="min-h-full flex overflow-x-hidden">
+	<section class="min-h-full flex overflow-x-hidden ">
 		<x-sidebar></x-sidebar>
 
-		<div class="flex flex-grow flex-col sm:ml-64">
+		<div class="flex flex-grow flex-col sm:ml-64 ">
 			<x-header>{{ $title }}</x-header>
-			<main class="w-full flex justify-center sm:justify-start items-center sm:items-start">
+			<main class="w-full flex justify-center sm:justify-start items-center sm:items-start ">
 				{{ $slot }}
 			</main>
 		</div>

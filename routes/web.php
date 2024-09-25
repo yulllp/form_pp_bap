@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -25,4 +26,8 @@ Route::get('/', function () {
 // Authenticate routes
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/changePassword', [ProfileController::class, 'updatePassword'])->name('password.update');
 });

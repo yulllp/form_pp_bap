@@ -32,7 +32,6 @@ class DepartmentSeeder extends Seeder
                 User::factory()
                     ->count(3) // Create 3 additional users
                     ->create([
-                        'department_id' => $department->id, // Set the department ID for users
                         'jabatan' => null, // Other users don't have a specific jabatan
                         'role' => 'user', // Set role for additional users to user
                     ]);
