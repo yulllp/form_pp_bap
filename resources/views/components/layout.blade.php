@@ -14,7 +14,7 @@
 
 		<div class="flex flex-grow flex-col sm:ml-64 bg-white dark:bg-gray-900">
 			<x-header>{{ $title }}</x-header>
-			<main class="w-full flex justify-center sm:justify-start items-center sm:items-start">
+			<main class="w-full flex justify-center sm:justify-start items-center sm:items-start ">
 				{{ $slot }}
 			</main>
 		</div>
