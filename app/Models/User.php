@@ -32,7 +32,9 @@ class User extends Authenticatable
         'jabatan',
         'tahun_masuk',
         'role',
-        'department_id'
+        'department_id',
+        'nomor',
+        'ttd'
     ];
 
     /**
