@@ -14,12 +14,11 @@ class PermintaanPembelian extends Model
     use HasFactory,HasUuids;
     protected $keyType = 'string'; // UUID is a string
     public $incrementing = false;
-
+    protected $table = 'permintaan_pembelian';
     protected $fillable = [
-        'user_id',
-        'pt_tujuan',
+        // 'user_id',
+        'pt_tujuan_id',
         'alasan',
-        'status'
     ];
 
     protected static function boot()
@@ -39,5 +38,10 @@ class PermintaanPembelian extends Model
     public function barang() : HasMany
     {
         return $this->hasMany(Barang::class, 'pp_id');
+    }
+
+    public function pt_tujuan(): BelongsTo
+    {
+        return $this->belongsTo(PtTujuan::class, 'pt_tujuan_id');
     }
 }

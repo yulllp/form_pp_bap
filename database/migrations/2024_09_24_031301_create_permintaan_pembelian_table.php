@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('permintaan_pembelian', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
-            $table->string('pt_tujuan');
+            $table->uuid('pt_tujuan_id');
             $table->string('alasan');
-            $table->string('status');
+            $table->string('status')->default('acc0');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('pt_tujuan_id')->references('id')->on('pt_tujuans')->onDelete('cascade');
         });
     }
 
