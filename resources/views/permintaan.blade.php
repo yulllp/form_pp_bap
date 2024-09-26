@@ -12,7 +12,7 @@
   $lamaBekerja = "{$years} tahun dan {$months} bulan";
   @endphp
 
-  <section class="bg-white dark:bg-gray-900 w-full px-4 py-4 sm:px-6 lg:px-32">
+  <section class="bg-white dark:bg-gray-900 w-full px-4 py-4 sm:px-6">
     @if (session('success'))
     <div id="alert" class="relative flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 transition-opacity duration-500 ease-in-out opacity-100" role="alert">
       <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -25,11 +25,11 @@
     </div>
     @endif
 
-    <form action="{{ route("permintaan.store")}}" method="post">
+    <form action="{{ route("permintaan.store")}}" method="post" class="xl:px-32">
       @csrf
       <div class="grid gap-6 mb-6 md:grid-cols-2">
         <div>
-          <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white " disabled>Nama Pengguna</label>
+          <label for="name" class="block mb-2 text-sm font-medium text-grayxl900 dark:text-white " disabled>Nama Pengguna</label>
           <input type="text" id="name" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed" disabled value="{{ Auth::user()->name }}" />
         </div>
         <div>
