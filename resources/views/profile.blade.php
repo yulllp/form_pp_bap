@@ -97,39 +97,51 @@
 
         @endif
 
-        <div class="max-w-4xl mx-auto p-8 bg-gray-50 mt-10 shadow-lg rounded-lg sm:p-12">
-            <h2 class="text-3xl font-semibold mb-8 text-gray-800">Profile Settings</h2>
+        <div class="max-w-4xl mx-auto p-8 bg-gray-50 mt-10 shadow-lg rounded-lg sm:p-12 dark:bg-gray-800 dark:border-gray-600">
+            <h2 class="text-3xl font-semibold mb-8 text-gray-800 dark:text-gray-200">Profile Settings</h2>
+
             <!-- Profile View Section -->
-            <div id="profile-view" class="p-6 border border-gray-300 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <div id="profile-view" class="p-6 border border-gray-300 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-600">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="mb-4">
-                        <label class="block font-semibold text-gray-700">Name:</label>
-                        <p id="view-name" class="text-gray-600">{{$user->name ?? '-'}}</p>
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300">Name:</label>
+                        <p id="view-name" class="text-gray-600 dark:text-gray-400">{{$user->name ?? '-'}}</p>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold text-gray-700">Username:</label>
-                        <p id="view-username" class="text-gray-600">{{$user->username ?? '-'}}</p>
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300">Username:</label>
+                        <p id="view-username" class="text-gray-600 dark:text-gray-400">{{$user->username ?? '-'}}</p>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold text-gray-700">Email:</label>
-                        <p id="view-email" class="text-gray-600">{{$user->email ?? '-'}}</p>
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300">Email:</label>
+                        <p id="view-email" class="text-gray-600 dark:text-gray-400">{{$user->email ?? '-'}}</p>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold text-gray-700">Jabatan:</label>
-                        <p id="view-jabatan" class="text-gray-600">{{$user->jabatan ?? '-'}}</p>
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300">Jabatan:</label>
+                        <p id="view-jabatan" class="text-gray-600 dark:text-gray-400">{{$user->jabatan ?? '-'}}</p>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold text-gray-700">Tahun Masuk:</label>
                         @php
                         $tahunMasuk = $user->tahun_masuk ?? null;
                         $formattedDate = $tahunMasuk ? (new DateTime($tahunMasuk))->format('F Y') : '-';
                         @endphp
 
-                        <p id="view-tahun" class="text-gray-600">{{ $formattedDate }}</p>
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300">Tahun Masuk:</label>
+                        <p id="view-tahun" class="text-gray-600 dark:text-gray-400">{{ $formattedDate }}</p>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold text-gray-700">Department:</label>
-                        <p id="view-department" class="text-gray-600">{{$user->department->nama ?? '-'}}</p>
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300">Department:</label>
+                        <p id="view-department" class="text-gray-600 dark:text-gray-400">{{$user->department->nama ?? '-'}}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300">Signature:</label>
+                        
+                    </div>
+                    <div class="mb-4">
+                    @if($user->ttd)
+                        <img src="{{ asset('storage/ttd/' . $user->ttd) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
+                        @else
+                        <p class="text-gray-600 dark:text-gray-400">-</p>
+                        @endif
                     </div>
                 </div>
                 <button class="mt-4 bg-blue-500 text-white py-2 px-4 rounded shadow-md hover:bg-blue-600 focus:ring focus:ring-blue-300" id="edit-button">Edit Profile</button>
@@ -139,36 +151,36 @@
             <form action="{{ route('profile.update') }}" method="post">
                 @csrf
                 @method('PUT')
-                <div id="profile-edit" class="hidden p-6 border border-gray-300 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div id="profile-edit" class="hidden p-6 border border-gray-300 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-600">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-700">Name:</label>
-                            <input id="edit-name" class="border w-full p-2 rounded-md" name="name" type="text" value="{{$user->name}}" required>
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">Name:</label>
+                            <input id="edit-name" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" name="name" type="text" value="{{$user->name}}" required>
                         </div>
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-700">Username:</label>
-                            <input id="edit-username" class="border w-full p-2 rounded-md" type="text" name="username" value="{{$user->username}}" required>
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">Username:</label>
+                            <input id="edit-username" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" type="text" name="username" value="{{$user->username}}" required>
                         </div>
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-700">Email:</label>
-                            <input id="edit-email" class="border w-full p-2 rounded-md" type="email" value="{{$user->email}}" required name="email">
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">Email:</label>
+                            <input id="edit-email" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" type="email" value="{{$user->email}}" required name="email">
                         </div>
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-700">Jabatan:</label>
-                            <input id="edit-jabatan" class="border w-full p-2 rounded-md" type="text" value="{{$user->jabatan}}" required name="jabatan">
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">Jabatan:</label>
+                            <input id="edit-jabatan" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" type="text" value="{{$user->jabatan}}" required name="jabatan">
                         </div>
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-700">Tahun Masuk:</label>
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">Tahun Masuk:</label>
                             @php
                             $tahunMasuk = $user->tahun_masuk ?? null;
                             $monthValue = $tahunMasuk ? date('Y-m', strtotime($tahunMasuk)) : '';
                             @endphp
 
-                            <input id="edit-tahun" class="border w-full p-2 rounded-md" type="month" value="{{ $monthValue }}" required name="tahun_masuk">
+                            <input id="edit-tahun" class="border border-gray-300 dark:border-gray-600 w-full p-2 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500" type="month" value="{{ $monthValue }}" required name="tahun_masuk">
                         </div>
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-700">Department:</label>
-                            <select id="edit-department" name="department_id" class="border w-full p-2 rounded-md" required>
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">Department:</label>
+                            <select id="edit-department" name="department_id" class="border border-gray-300 dark:border-gray-600 w-full p-2 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                                 <option value="" disabled selected>Select Department</option>
                                 @foreach ($departments as $department)
 
@@ -179,6 +191,14 @@
                                 <option value="{{ $department->id }}">{{ $department->nama }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">Signature:</label>
+                            <input id="edit-signature" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" type="file" name="signature" accept="image/*">
+                            @if($user->ttd)
+                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Current Signature: </p>
+                            <img src="{{ asset('storage/ttd/' . $user->ttd) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
+                            @endif
                         </div>
                     </div>
                     <div class="flex gap-4 mt-6">
@@ -191,15 +211,15 @@
             <form action="{{route('password.update')}}" method="post">
                 @csrf
                 @method('PUT')
-                <div id="cpw-edit" class="hidden p-6 border border-gray-300 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div id="cpw-edit" class="hidden p-6 border border-gray-300 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-600">
                     <div class="flex flex-col gap-4">
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-700">New Password:</label>
-                            <input id="edit-newpassword" class="border w-full p-2 rounded-md" name="new_password" type="password" required>
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">New Password:</label>
+                            <input id="edit-newpassword" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" name="new_password" type="password" required>
                         </div>
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-700">Confirm Password:</label>
-                            <input id="edit-confirmpassword" class="border w-full p-2 rounded-md" name="confirm_password" type="password" required>
+                            <label class="block font-semibold text-gray-700 dark:text-gray-300">Confirm Password:</label>
+                            <input id="edit-confirmpassword" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" name="confirm_password" type="password" required>
                         </div>
                     </div>
                     <div id="alert" class="hidden mt-4 p-4 border border-red-300 bg-red-50 text-red-800" role="alert">
@@ -214,7 +234,6 @@
                     </div>
                 </div>
             </form>
-
         </div>
     </section>
 </x-layout>
