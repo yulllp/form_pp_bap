@@ -10,7 +10,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty($user->department_id);
+        $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty($user->department_id) || empty($user->ttd);
         return view('dashboard', ['title' => "Dashboard", 'isProfileIncomplete' => $isProfileIncomplete]);
     }
 }
