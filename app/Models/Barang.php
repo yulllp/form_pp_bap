@@ -14,6 +14,9 @@ class Barang extends Model
     protected $keyType = 'string'; // UUID is a string
     public $incrementing = false; // Disable auto-incrementing
 
+    protected $table = 'barang';
+
+
     protected $fillable = [
         'pp_id',
         'nama',

@@ -38,13 +38,159 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->alasan }}
             </td>
-            <td class="px-6 py-4">
-              <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Check Status</a>
+            <td class="px-6 py-4 flex space-x-3">
+              <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal" data-original-icon data-status="{{ $data->status }}" data-create="{{ $data->created_at }}" data-confirm-it="{{ $data->it_confirm_date }}" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                Status
+              </button>
+              @if (Auth::user()->role == 'admin')
+              <a href="{{ route('permintaan.edit', $data->id) }}">
+                <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                  Approval
+                </button>
+              </a>
+              @endif
             </td>
           </tr>
         </tbody>
         @endforeach
       </table>
     </div>
+
+    <div id="timeline-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+      <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+          <!-- Modal header -->
+          <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+              Status
+            </h3>
+            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="timeline-modal">
+              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+              </svg>
+              <span class="sr-only">Close modal</span>
+            </button>
+          </div>
+          <!-- Modal body -->
+          <div class="p-7 md:p-10">
+            <ol class="relative text-gray-500 border-s border-gray-200 dark:border-gray-900 dark:text-gray-400">
+              <li class="mb-10 ms-7 step">
+                <span class="absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-green-900">
+                  <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                  </svg>
+                </span>
+                <h3 class="font-medium leading-tight">Data berhasil di upload</h3>
+                <p class="text-sm">Data telah di upload pada tanggal</p>
+              </li>
+              <li class="mb-10 ms-7 step">
+                <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700">
+                  <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+                    <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Z" />
+                  </svg>
+                </span>
+                <h3 class="font-medium leading-tight">Menunggu konfirmasi dari Pihak IT</h3>
+                <p class="text-sm">Step</p>
+              </li>
+              <li class="ms-7 step">
+                <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700">
+                  <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                    <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                  </svg>
+                </span>
+                <h3 class="font-medium leading-tight">Menunggu konfirmasi dari Manager</h3>
+                <p class="text-sm">Step</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </x-layout>
+
+<script>
+  document.querySelectorAll('button[data-modal-target="timeline-modal"]').forEach(button => {
+    button.addEventListener('click', function() {
+      const status = this.getAttribute('data-status');
+      let created_at = formatDate(this.getAttribute('data-create'));
+      let it_confirm_date = formatDate(this.getAttribute('data-confirm-it'));
+
+      document.querySelectorAll('.step').forEach(step => {
+        step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700';
+        step.querySelector('svg').className = 'w-3.5 h-3.5 text-gray-500 dark:text-gray-400';
+      });
+
+      if (status === 'acc0') {
+        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+        setStepInProgress1(1, 'Menunggu konfirmasi dari Pihak IT', 'IT: Nathan');
+      } else if (status === 'acc1') {
+        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
+        setStepInProgress2(2, 'Menunggu konfirmasi dari Manager', 'Manager: Yulius');
+      } else if (status === 'acc2') {
+        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+        setStepComplete1(1, 'Konfirmasi dari Pihak IT selesai', `Data dibuat pada ${it_confirm_date}`);
+        setStepComplete2(2, 'Konfirmasi dari Manager selesai', `Data dibuat pada ${created_at}`);
+      } else if (status === 'acc-1') {
+        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+        displayRedCross(1, 'Permintaan ditolak oleh IT', `Data ditolak pada ${it_confirm_date}`)
+      }
+    });
+  });
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    };
+    return date.toLocaleDateString('en-GB', options); // '26 Sept 2024'
+  }
+
+  function setStepComplete(stepIndex, title, sub) {
+    const step = document.querySelectorAll('.step')[stepIndex];
+    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-green-900';
+    step.querySelector('svg').className = 'w-3.5 h-3.5 text-green-500 dark:text-green-400';
+    step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                  </svg>`
+    step.querySelector('h3').textContent = title;
+    step.querySelector('p').innerHTML = sub;
+  }
+
+  function setStepInProgress1(stepIndex, title, sub) {
+    const step = document.querySelectorAll('.step')[stepIndex];
+    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-yellow-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-yellow-600';
+    step.querySelector('svg').className = 'w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400';
+    step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+                    <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Z" />
+                  </svg>`
+    step.querySelector('h3').textContent = title;
+    step.querySelector('p').innerHTML = sub;
+  }
+
+  function setStepInProgress2(stepIndex, title, sub) {
+    const step = document.querySelectorAll('.step')[stepIndex];
+    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-yellow-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-yellow-600';
+    step.querySelector('svg').className = 'w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400';
+    step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                    <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                  </svg>`
+    step.querySelector('h3').textContent = title;
+    step.querySelector('p').innerHTML = sub;
+  }
+
+  function displayRedCross(stepIndex, title, sub) {
+    const step = document.querySelectorAll('.step')[stepIndex];
+    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-red-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-red-900';
+    step.querySelector('svg').className = 'w-3.5 h-3.5 text-red-500 dark:text-red-400';
+    step.querySelector('svg').innerHTML = `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1l14 14m0-14L1 15" />
+              </svg>`;
+    step.querySelector('h3').textContent = title;
+    step.querySelector('p').innerHTML = sub;
+}
+</script>

@@ -35,5 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/changePassword', [ProfileController::class, 'updatePassword'])->name('password.update');
+    Route::get('/approval/permintaan/{id}', [PermintaanController::class, 'editIndex'])->name('permintaan.edit');
+    Route::put('/approval/permintaan/{id}', [PermintaanController::class, 'update'])->name('permintaan.update');
     Route::get('/print/{id}',[PermintaanController::class,'printpp'])->name('printpp');
 });
