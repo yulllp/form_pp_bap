@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApproveMail;
 use App\Models\Barang;
 use App\Models\PermintaanPembelian;
 use Dompdf\Dompdf;
 use App\Models\PtTujuan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class PermintaanController extends Controller
 {
@@ -56,6 +59,13 @@ class PermintaanController extends Controller
             $pp->alasan = $validate['alasan'];
             $pp->nomor = $nomor;
             $pp->save();
+
+            $to="itsupport@imligroup.com";
+            $msg=$pp;
+            $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+            Mail::to($to)->send(new ApproveMail($msg,$subject));
+    
 
             return redirect()->route('permintaan')->with('success', 'Permintaan pembelian created successfully.');
         } catch (\Exception $e) {

@@ -138,7 +138,7 @@
                     </div>
                     <div class="mb-4">
                     @if($user->ttd)
-                        <img src="{{ asset('storage/ttd/' . $user->ttd) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
+                        <img src="{{ asset('storage/' . $user->ttd) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
                         @else
                         <p class="text-gray-600 dark:text-gray-400">-</p>
                         @endif
@@ -148,7 +148,7 @@
                 <button class="mt-4 bg-red-500 text-white py-2 px-4 rounded shadow-md hover:bg-red-600 focus:ring focus:ring-red-300" id="cpw-button">Change Password</button>
             </div>
 
-            <form action="{{ route('profile.update') }}" method="post">
+            <form action="{{ route('profile.update') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div id="profile-edit" class="hidden p-6 border border-gray-300 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-600">
@@ -197,7 +197,7 @@
                             <input id="edit-signature" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" type="file" name="signature" accept="image/*">
                             @if($user->ttd)
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Current Signature: </p>
-                            <img src="{{ asset('storage/ttd/' . $user->ttd) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
+                            <img src="{{ asset('storage/' . $user->ttd) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
                             @endif
                         </div>
                     </div>

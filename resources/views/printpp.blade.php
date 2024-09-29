@@ -9,13 +9,16 @@
         body {
             font-family: Calibri, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             padding-right: 20px;
             transform: scale(0.7);
             /* Scale down the content */
-            transform-origin: top center;
+            transform-origin: top left;
         }
 
+        .di{
+            text-align: center;
+        }
         @page {
             size: A4 portrait;
             margin: 0;
@@ -31,7 +34,8 @@
         }
 
         .container {
-            width: 100%;
+            /* width: 100%; */
+            width: 1050px;
             height: 100%;
             box-sizing: border-box;
             padding: 10px;
@@ -82,8 +86,9 @@
         }
 
         .ttd {
-            width: 33.33%;
+            width: 100px;
             height: 60px;
+            text-align: center;
         }
 
         p {
@@ -95,6 +100,11 @@
         .footer-table {
             border-collapse: collapse;
             border: 1px solid black;
+        }
+
+        img{
+            width: 85px;
+            height: 60px;
         }
     </style>
 </head>
@@ -117,7 +127,7 @@
             </table>
             <table class="info-table">
                 <tr>
-                    <td>No PPI - Perangkat IT</td>
+                    <td style="width: 350px;">No PPI - Perangkat IT</td>
                     <td colspan="2">{{$pp->nomor}}</td>
                 </tr>
                 <tr>
@@ -211,13 +221,17 @@
             <!-- Sign Table with fixed column size -->
             <table class="sign-table">
                 <tr>
-                    <td>Diminta</td>
-                    <td>Diketahui</td>
-                    <td>Disetujui</td>
+                    <td class="di">Diminta</td>
+                    <td class="di">Diketahui</td>
+                    <td class="di">Disetujui</td>
                 </tr>
                 <tr>
-                    <td class="ttd">TTD DIGITAL</td>
-                    <td class="ttd">TTD DIGITAL</td>
+                    <td class="ttd">
+                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/'.$pp->user->ttd))); ?>" >
+                    </td>
+                    <td class="ttd">
+                        TTD DIGITAL
+                    </td>
                     <td class="ttd">TTD DIGITAL</td>
                 </tr>
             </table>
