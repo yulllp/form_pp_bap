@@ -34,7 +34,8 @@ class User extends Authenticatable
         'role',
         'department_id',
         'nomor',
-        'ttd'
+        'ttd',
+        'status'
     ];
 
     /**

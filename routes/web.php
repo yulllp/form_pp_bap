@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OngoingController;
 use App\Http\Controllers\PermintaanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -38,4 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/approval/permintaan/{id}', [PermintaanController::class, 'editIndex'])->name('permintaan.edit');
     Route::put('/approval/permintaan/{id}', [PermintaanController::class, 'update'])->name('permintaan.update');
     Route::get('/print/{id}',[PermintaanController::class,'printpp'])->name('printpp');
+    Route::get('/printpp/{id}',[PermintaanController::class,'printpp'])->name('printpp');
+    Route::get('/admin/users',[UserController::class,'index'])->name('admin.users');
+    Route::post('/admin/users',[UserController::class,'store'])->name('store.user');
+    Route::put('/admin/users/{id}',[UserController::class,'update'])->name('update.user');
+    Route::delete('/admin/users/{id}',[UserController::class,'destroy'])->name('destroy.user');
 });

@@ -37,7 +37,40 @@ $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty
                <span class="flex-1 ms-3 whitespace-nowrap">History</span>
             </a>
          </li>
-         @endif
+         <li>
+            @if (Auth::user()->role == 'admin')
+            <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" aria-controls="dropdown-admin" data-collapse-toggle="dropdown-admin">
+               <i class="fa-solid fa-user-secret"></i>
+               <span class="flex-1 ml-3 text-left whitespace-nowrap">Admin</span>
+               <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+               </svg>
+            </button>
+            <!-- Dropdown Menu -->
+            <ul id="dropdown-admin" class="hidden py-2 space-y-2">
+               <li>
+                  <a href="{{route('admin.users')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-solid fa-users"></i> <!-- Icon for Users -->
+                     <span class="ml-3">Users</span>
+                  </a>
+               </li>
+               <li>
+                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-solid fa-building"></i> <!-- Icon for Department -->
+                     <span class="ml-3">Departments</span>
+                  </a>
+               </li>
+               <li>
+                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-solid fa-city"></i> <!-- Icon for Company -->
+                     <span class="ml-3">Companies</span>
+                  </a>
+               </li>
+            </ul>
+            @endif
+         </li>
+      </ul>
+      @endif
       </ul>
       <ul class="font-medium space-y-2">
          <li>
