@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OngoingController;
 use App\Http\Controllers\PermintaanController;
@@ -44,4 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/users',[UserController::class,'store'])->name('store.user');
     Route::put('/admin/users/{id}',[UserController::class,'update'])->name('update.user');
     Route::delete('/admin/users/{id}',[UserController::class,'destroy'])->name('destroy.user');
+    Route::get('/admin/departments',[DepartmentController::class,'index'])->name('admin.departments');
+    Route::post('/admin/departments',[DepartmentController::class,'store'])->name('store.department');
+    Route::put('/admin/departments/{id}',[DepartmentController::class,'update'])->name('update.department');
+    Route::delete('/admin/departments/{id}',[DepartmentController::class,'destroy'])->name('destroy.department');
+    Route::get('/admin/companies',[CompanyController::class,'index'])->name('admin.companies');
+    Route::post('/admin/companies',[CompanyController::class,'store'])->name('store.company');
+    Route::put('/admin/companies/{id}',[CompanyController::class,'update'])->name('update.company');
+    Route::delete('/admin/companies/{id}',[CompanyController::class,'destroy'])->name('destroy.company');
 });

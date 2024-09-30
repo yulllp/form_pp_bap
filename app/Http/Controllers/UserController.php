@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('department')->latest()->paginate(20);
+        $users = User::with('department')->filter(request(['search']))->sortable()->latest()->paginate(20)->withQueryString();
         $departments = Department::all();
         return view('admin-users', ['title' => 'Admin - Users', 'users' => $users, 'departments' => $departments]);
     }

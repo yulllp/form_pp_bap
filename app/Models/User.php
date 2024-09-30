@@ -11,11 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Kyslik\ColumnSortable\Sortable;
+use Illuminate\Database\Eloquent\Builder;
 use Ramsey\Uuid\Uuid;
+
+use function Laravel\Prompts\search;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable,HasUuids;
+    use HasFactory, Notifiable,HasUuids,Sortable;
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -35,6 +39,10 @@ class User extends Authenticatable
         'department_id',
         'nomor',
         'ttd',
+        'status'
+    ];
+
+    public $sortable = [
         'status'
     ];
 
@@ -82,6 +90,12 @@ class User extends Authenticatable
 
     public function leaderDepartment()
     {
-        return $this->hasOne(Department::class, 'pemimpin_id');
+        return $this->hasMany(Department::class, 'pemimpin_id');
+    }
+
+    public function scopeFilter(Builder $query, array $filters): void{
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        });
     }
 }

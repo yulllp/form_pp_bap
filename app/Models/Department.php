@@ -8,16 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Ramsey\Uuid\Uuid;
+use Kyslik\ColumnSortable\Sortable;
+use Illuminate\Database\Eloquent\Builder;
 
 class Department extends Model
 {
-    use HasFactory,HasUuids;
+    use HasFactory,HasUuids,Sortable;
     protected $keyType = 'string'; // UUID is a string
     public $incrementing = false; // Disable auto-incrementing
     
     protected $fillable = [
         'nama',
         'pemimpin_id'
+    ];
+
+    public $sortable = [
+        'status'
     ];
 
     protected static function boot()
@@ -38,5 +44,11 @@ class Department extends Model
     public function leader() : BelongsTo
     {
         return $this->belongsTo(User::class, 'pemimpin_id');
+    }
+
+    public function scopeFilter(Builder $query, array $filters): void{
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            $query->where('nama', 'like', '%' . $search . '%');
+        });
     }
 }
