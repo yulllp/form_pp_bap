@@ -65,7 +65,7 @@
                 </button>
               </a>
               @endif
-              @if ((Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name) && ($data->status == 'acc0' || $data->status == 'acc-2' || $data->status == 'acc-1' || $data->status == 'acc1'))
+              @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc-1')) || (Auth::user()->name == Auth::user()->department->leader->name && ($data->status == 'acc-2' || $data->status == 'acc1')))
               <a href="{{ route('permintaan.approval', $data->id) }}">
                 <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                   Approval
@@ -119,7 +119,7 @@
                   </svg>
                 </span>
                 <h3 class="font-medium leading-tight">Menunggu konfirmasi dari Pihak IT</h3>
-                <p class="text-sm">Data sedang diproses</p>
+                <p class="text-sm"></p>
               </li>
               <li class="ms-7 step">
                 <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700">
@@ -128,7 +128,7 @@
                   </svg>
                 </span>
                 <h3 class="font-medium leading-tight">Menunggu konfirmasi dari Manager</h3>
-                <p class="text-sm">Menunggu proses dari IT</p>
+                <p class="text-sm"></p>
               </li>
             </ol>
           </div>
@@ -156,7 +156,7 @@
 
       if (status === 'acc0') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        setStepInProgress1(1, 'Menunggu konfirmasi dari Pihak IT', 'Konfirmasi akan dikirimi ke email anda');
+        setStepInProgress1(1, 'Menunggu konfirmasi dari Pihak IT');
       } else if (status === 'acc1') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
         setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
@@ -166,12 +166,12 @@
         setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
         setStepComplete(2, 'Konfirmasi dari Manager selesai', `Data dikonfirm pada ${manager_confirm_date}`);
       } else if (status === 'acc-1') {
-        setStepInProgress1(0, 'Terdapat kesalahan pada data user', 'Menunggu pembaharuan dari user');
+        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
         displayRedCross(1, 'Permintaan ditolak oleh IT', `Data ditolak pada ${it_confirm_date}. Silahkan menghubungi pihak IT`)
       } else if (status === 'acc-2') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        setStepInProgress1(1, 'Revisi dari Pihak IT', 'Silahkan menunggu pemberitahuan pihak IT');
-        displayRedCross(2, 'Permintaan ditolak oleh Manager', `Data dikonfirm pada ${manager_confirm_date}`);
+        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
+        displayRedCross(2, 'Permintaan ditolak oleh Manager', `Data dikonfirm pada ${manager_confirm_date}. Silahkan menunggu pemberitahuan pihak IT`);
       }
     });
   });

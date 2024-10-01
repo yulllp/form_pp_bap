@@ -13,7 +13,9 @@
   @endphp
 
   <section class="bg-white dark:bg-gray-900 w-full px-4 py-4 sm:px-6">
-    <div class="xl:px-20">
+    <form class="xl:px-20" action="{{ route('permintaan.approval', $data->id)}}" method="post">
+      @csrf
+      @method('PUT')
       @if (session('success'))
       <div id="alert" class="relative flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 transition-opacity duration-500 ease-in-out opacity-100" role="alert">
         <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -26,7 +28,6 @@
       </div>
       @endif
       <div class="grid gap-6 mb-6 md:grid-cols-2 lg:grid-cols-3">
-        <input type="hidden" id="barangData" value="{{json_encode($barangData)}}">
         <div>
           <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white " disabled>Nama Pengguna</label>
           <input type="text" id="name" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed" disabled value="{{ $data->user->name }}" />
@@ -41,7 +42,11 @@
         </div>
         <div>
           <label for="pt_tujuan_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pembelian untuk PT</label>
-          <select id="pt_tujuan_id" name="pt_tujuan_id" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed" disabled required>
+          <select id="pt_tujuan_id" name="pt_tujuan_id"
+            class="{{ Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name 
+      ? 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' 
+      : 'bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed' }}"
+            {{ Auth::user()->role != 'user' || Auth::user()->name == Auth::user()->department->leader->name ? 'disabled' : '' }} required>
             @foreach($pts as $pt)
             <option value="{{ $pt->id }}" {{ $pt->name == $data->pt_tujuan->name ? 'selected' : '' }}>
               {{ $pt->name }}
@@ -51,14 +56,23 @@
         </div>
         <div class="md:col-span-2">
           <label for="alasan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alasan permintaan</label>
-          <textarea id="alasan" rows="4" name="alasan" class="cursor-not-allowed block p-2.5 w-full text-sm text-gray-900 bg-gray-100 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Masukan alasan" disabled required>{{ $data->alasan }}</textarea>
+          <textarea id="alasan" rows="4" name="alasan"
+            class="{{ Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name 
+      ? 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' 
+      : 'bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed' }}"
+            placeholder="Masukan alasan"
+            {{ Auth::user()->role != 'user' || Auth::user()->name == Auth::user()->department->leader->name ? 'disabled' : '' }} required>{{ $data->alasan }}</textarea>
         </div>
       </div>
 
+      @if (Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name)
+      <input type="hidden" id="barangData" value="{{json_encode($barangData)}}">
       <div>
         <h1 class="block mb-2 text-md font-medium text-gray-900 dark:text-white">Keterangan Barang</h1>
       </div>
+      @endif
 
+      @if (Auth::user()->role == 'admin')
       <div class="grid gap-6 mb-10 md:grid-cols-2 lg:grid-cols-9">
         <div class="col-span-2">
           <label for="spec" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama spesifikasi</label>
@@ -91,7 +105,9 @@
           <button id="add" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add</button>
         </div>
       </div>
+      @endif
 
+      @if (Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name)
       <div class="overflow-auto shadow-md sm:rounded-lg mb-10">
         <table class="table w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -114,42 +130,62 @@
               <th scope="col" class="px-6 py-3">
                 Keterangan IT
               </th>
+              @if (Auth::user()->role == 'admin')
               <th scope="col" class="px-6 py-3">
                 Aksi
               </th>
+              @endif
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-            </tr>
           </tbody>
         </table>
       </div>
-    </div>
+      @endif
 
-    <div class="flex items-end justify-end space-x-6 xl:px-20">
-      <form action="{{ route('permintaan.update', $data->id) }}" method="post">
-        @csrf
-        @method('PUT')
-        <input type="hidden" name="status" value="disapprove">
-        <input type="hidden" name="dataArray" class="dataArray" value="">
-        <button type="submit" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Disapprove</button>
-      </form>
-      <form action="{{ route('permintaan.update', $data->id) }}" method="post">
-        @csrf
-        @method('PUT')
-        <input type="hidden" name="dataArray" class="dataArray" value="">
-        <input type="hidden" name="status" value="simpan">
-        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Simpan</button>
-      </form>
-      <form action="{{ route('permintaan.update', $data->id) }}" method="post">
-        @csrf
-        @method('PUT')
-        <input type="hidden" name="status" value="approve">
-        <input type="hidden" name="dataArray" class="dataArray" value="">
-        <button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Simpan & approve</button>
-      </form>
-    </div>
+      <input type="hidden" name="dataArray" id="dataArray" value="">
+      <input type="hidden" name="status" id="status" value="">
+
+      <div class="mb-10">
+        <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your message</label>
+        <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..."></textarea>
+      </div>
+
+      <div class="flex items-end justify-end space-x-6">
+        @if ((Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name) && ($data->status == 'acc0' || $data->status == 'acc-2' || $data->status == 'acc1'))
+        <button type="button" id="disapproveBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Disapprove</button>
+        @endif
+        @if (Auth::user()->role == 'admin' || Auth::user()->name != Auth::user()->department->leader->name)
+        <button type="button" id="simpanBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Simpan</button>
+        @endif
+        @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name) && ($data->status == 'acc1' || $data->status == 'acc-2'))
+        <button type="button" id="approveBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Approve</button>
+        @endif
+      </div>
+
+      <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
+              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+              </svg>
+              <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-4 md:p-5 text-center">
+              <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              <h3 id="modalMessage" class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Apakah data yang diisi sudah benar?</h3>
+              <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-red-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
+              <button data-modal-hide="popup-modal" type="submit" class="ms-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                Yes, I'm sure
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
 
     <div id="crud-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
       <div class="relative p-4 w-full max-w-md max-h-full">
@@ -217,6 +253,7 @@
     const addButton = document.getElementById('add');
     const tableBody = document.querySelector('tbody');
     const rawData = JSON.parse(document.getElementById('barangData').value);
+    const user = '{{ Auth::user()->role }}'
 
     let dataArray = rawData.map(item => ({
       nama: item.nama,
@@ -237,44 +274,50 @@
     }
 
     function updateHiddenInput() {
-      let hiddenInputs = document.querySelectorAll('.dataArray');
-      hiddenInputs.forEach(hiddenInput => {
+      const hiddenInput = document.getElementById('dataArray');
+      if (user == 'admin') {
         hiddenInput.value = JSON.stringify(dataArray);
-      });
+      } else {
+
+      }
     }
 
     // Function to render the table
     function renderTable() {
-      tableBody.innerHTML = '';
-
-      dataArray.forEach((rowData, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+      if ('{{ Auth::user()->role }}' == 'admin' || '{{Auth::user()->name}}' == '{{Auth::user()->department->leader->name}}') {
+        tableBody.innerHTML = '';
+        dataArray.forEach((rowData, index) => {
+          const row = document.createElement('tr');
+          row.classList = "bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+          row.innerHTML = `
         <td class="px-6 py-4">${index + 1}</td>
         <td class="px-6 py-4">${rowData.nama}</td>
         <td class="px-6 py-4">${rowData.jumlah}</td>
         <td class="px-6 py-4">${rowData.satuan}</td>
         <td class="px-6 py-4">${rowData.tanggal_diperlukan}</td>
         <td class="px-6 py-4">${rowData.keterangan_it}</td>
-        <td class="px-6 py-4">
+        @if (Auth::user()->role == 'admin')
+          <td class="flex px-6 py-4">
           <button type="button" class="edit-button text-blue-600 hover:underline mr-5" data-index="${index}">Edit</button>
           <button type="button" class="delete-button text-red-600 hover:underline">Delete</button>
-        </td>
+          </td>  
+        @endif
       `;
-        tableBody.appendChild(row);
+          tableBody.appendChild(row);
 
-        const deleteButton = row.querySelector('.delete-button');
-        deleteButton.addEventListener('click', function() {
-          deleteRow(index);
-        });
+          const deleteButton = row.querySelector('.delete-button');
+          deleteButton.addEventListener('click', function() {
+            deleteRow(index);
+          });
 
-        const editButton = row.querySelector('.edit-button');
-        editButton.addEventListener('click', function() {
-          currentEditIndex = index; // Save the index of the row being edited
-          openModalWithData(rowData);
-          modal.show(); // Show the modal when edit is clicked
+          const editButton = row.querySelector('.edit-button');
+          editButton.addEventListener('click', function() {
+            currentEditIndex = index; // Save the index of the row being edited
+            openModalWithData(rowData);
+            modal.show(); // Show the modal when edit is clicked
+          });
         });
-      });
+      }
     }
 
     // Open the modal and populate the input fields with data
@@ -316,9 +359,11 @@
     }
 
     // Add click event to the "Add" button
-    addButton.addEventListener('click', function() {
-      addRow();
-    });
+    if (user == 'admin') {
+      addButton.addEventListener('click', function() {
+        addRow();
+      });
+    }
 
     // Add click event to the "Save" button in the modal
     const saveButton = document.getElementById('save-edit');
@@ -355,6 +400,35 @@
       document.getElementById('satuan').value = '';
       document.getElementById('datepicker-autohide').value = '';
       document.getElementById('keterangan').value = '';
+    }
+
+    const statusInput = document.getElementById('status');
+    const modalMessage = document.getElementById('modalMessage');
+    const disapproveBtn = document.getElementById('disapproveBtn');
+    const approveBtn = document.getElementById('approveBtn');
+    const simpanBtn = document.getElementById('simpanBtn');
+
+    if (disapproveBtn) {
+      document.getElementById('disapproveBtn').addEventListener('click', function() {
+        statusInput.value = 'disapprove';
+        modalMessage.innerText = 'Are you sure you want to disapprove this data?';
+      });
+    }
+
+    if (simpanBtn) {
+      if (user == 'admin') {
+        document.getElementById('simpanBtn').addEventListener('click', function() {
+          statusInput.value = 'simpan';
+          modalMessage.innerText = 'Are you sure you want to save this data?';
+        });
+      }
+    }
+
+    if (approveBtn) {
+      document.getElementById('approveBtn').addEventListener('click', function() {
+        statusInput.value = 'approve';
+        modalMessage.innerText = 'Are you sure you want to approve this data?';
+      });
     }
 
     setTimeout(() => {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OngoingController;
 use App\Http\Controllers\PermintaanController;
@@ -36,8 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/changePassword', [ProfileController::class, 'updatePassword'])->name('password.update');
-    Route::get('/approval/permintaan/{id}', [PermintaanController::class, 'editIndex'])->name('permintaan.edit');
+    Route::get('/approval/permintaan/{id}', [PermintaanController::class, 'approvalIndex'])->name('permintaan.approval');
+    Route::get('/edit/permintaan/{id}', [PermintaanController::class, 'editIndex'])->name('permintaan.edit');
     Route::put('/approval/permintaan/{id}', [PermintaanController::class, 'update'])->name('permintaan.update');
+    Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::get('/print/{id}',[PermintaanController::class,'printpp'])->name('printpp');
     Route::get('/printpp/{id}',[PermintaanController::class,'printpp'])->name('printpp');
     Route::get('/admin/users',[UserController::class,'index'])->name('admin.users');
