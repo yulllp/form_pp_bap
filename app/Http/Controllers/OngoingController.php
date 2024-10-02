@@ -13,12 +13,12 @@ class OngoingController extends Controller
     {
         $user = User::with(['department'])->find(Auth::id());
         if (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name) {
-            $data = PermintaanPembelian::with('pt_tujuan')->whereNot('status', 'acc2')->latest()->paginate(20);
+            $data = PermintaanPembelian::with('pt_tujuan')->whereNot('status', 'acc2')->where('user_id', Auth::user()->id)->latest()->paginate(20);
         } elseif (Auth::user()->role == 'admin') {
             $data = PermintaanPembelian::with('pt_tujuan')->whereIn('status', ['acc0', 'acc-2', 'acc-1', 'acc1'])->latest()->paginate(20);
         } elseif (Auth::user()->name == Auth::user()->department->leader->name) {
             $data = PermintaanPembelian::with('pt_tujuan', 'user')
-                ->where('status', 'acc1')
+                ->whereIn('status', ['acc1', 'acc-2'])
                 ->whereHas('user', function ($query) use ($user) {
                     $query->where('department_id', $user->department_id);
                 })

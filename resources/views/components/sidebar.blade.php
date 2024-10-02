@@ -38,6 +38,36 @@ $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty
             </a>
          </li>
          <li>
+            <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" aria-controls="dropdown-bap" data-collapse-toggle="dropdown-bap">
+               <i class="fa-solid fa-file"></i>
+               <span class="flex-1 ml-3 text-left whitespace-nowrap">Berita Acara Pengakuan</span>
+               <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+               </svg>
+            </button>
+            <!-- Dropdown Menu -->
+            <ul id="dropdown-bap" class="hidden py-2 space-y-2">
+               <li>
+                  <a href="{{route('admin.users')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-solid fa-pencil"></i>
+                     <span class="ml-3">Create</span>
+                  </a>
+               </li>
+               <li>
+                  <a href="{{route('admin.departments')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-solid fa-file-contract"></i>
+                     <span class="ml-3">Ongoing</span>
+                  </a>
+               </li>
+               <li>
+                  <a href="{{route('admin.companies')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-solid fa-clock-rotate-left"></i>
+                     <span class="ml-3">History</span>
+                  </a>
+               </li>
+            </ul>
+         </li>
+         <li>
             @if (Auth::user()->role == 'admin')
             <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" aria-controls="dropdown-admin" data-collapse-toggle="dropdown-admin">
                <i class="fa-solid fa-user-secret"></i>
@@ -55,15 +85,39 @@ $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty
                   </a>
                </li>
                <li>
-                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="{{route('admin.departments')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-solid fa-building"></i> <!-- Icon for Department -->
                      <span class="ml-3">Departments</span>
                   </a>
                </li>
                <li>
-                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="{{route('admin.companies')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-solid fa-city"></i> <!-- Icon for Company -->
                      <span class="ml-3">Companies</span>
+                  </a>
+               </li>
+               <li>
+                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-solid fa-copyright"></i>
+                     <span class="ml-3">Brand</span>
+                  </a>
+               </li>
+               <li>
+                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-solid fa-bars"></i>
+                     <span class="ml-3">Type</span>
+                  </a>
+               </li>
+               <li>
+                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-brands fa-windows"></i>
+                     <span class="ml-3">Operating System</span>
+                  </a>
+               </li>
+               <li>
+                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                     <i class="fa-brands fa-microsoft"></i>
+                     <span class="ml-3">Microsoft Office</span>
                   </a>
                </li>
             </ul>

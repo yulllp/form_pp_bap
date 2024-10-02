@@ -1,5 +1,5 @@
 <x-layout>
-    @section('title', 'Admin-Users')
+    @section('title', 'Admin-Departments')
     <x-slot:title>{{$title}} </x-slot:title>
     <section class="bg-white dark:bg-gray-900 w-full relative px-4 py-4 sm:px-6">
         @if ($errors->any())
@@ -118,9 +118,9 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                     </div>
-                    <input name="search" type="search" id="default-search" value="{{ old('search') }}" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search User Name" autocomplete="off" />
+                    <input name="search" type="search" id="default-search" value="{{ old('search') }}" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Department Name" autocomplete="off" />
                     <button type="submit" class="text-white absolute right-20 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
-                    <a href="{{route('admin.users')}}">
+                    <a href="{{route('admin.companies')}}">
                         <button class="text-white absolute right-2.5 bottom-2.5 bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">Clear</button>
                     </a>
                 </div>
@@ -131,7 +131,7 @@
                 <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                 </svg>
-                Add User
+                Add Department
             </button>
         </div>
 
@@ -147,90 +147,42 @@
                             Nama
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Username
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Email
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Jabatan
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Department
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Tahun Masuk
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Tanda Tangan
+                            Pemimpin
                         </th>
                         <th scope="col" class="px-6 py-3">
                             @sortablelink('status','Status')
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Role
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Action
                         </th>
                     </tr>
                 </thead>
-                @foreach ($users as $key => $user)
+                @foreach ($departments as $key => $department)
                 <tbody>
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="px-6 py-3">
-                            {{ $users->firstItem() + $key }}
+                            {{ $departments->firstItem() + $key }}
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $user->name }}
+                            {{ $department->nama }}
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $user->username }}
+                            {{ $department->leader->name }}
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $user->email ?? '-'}}
-                        </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $user->jabatan ?? '-'}}
-                        </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $user->department->nama ?? '-' }}
-                        </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            @php
-                            $tahunMasuk = $user->tahun_masuk ?? null;
-                            $formattedDate = $tahunMasuk ? (new DateTime($tahunMasuk))->format('F Y') : '-';
-                            @endphp
-                            {{ $formattedDate ?? '-'}}
-                        </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            @if ($user->ttd)
-                            <span class="text-green-500"><i class="fa-solid fa-check"></i></span>
+                            @if ($department->status == 'active')
+                            <p class="text-green-500"> {{$department->status}} </p>
                             @else
-                            <span class="text-red-500"><i class="fa-solid fa-times"></i></span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            @if ($user->status == 'active')
-                            <p class="text-green-500"> {{$user->status}} </p>
-                            @else
-                            <p class="text-red-500"> {{$user->status}} </p>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            @if ($user->role == 'admin')
-                            <p> {{$user->role}} </p>
-                            @else
-                            <p> {{$user->role}} </p>
+                            <p class="text-red-500"> {{$department->status}} </p>
                             @endif
                         </td>
                         <td class="px-6 py-4 flex space-x-3">
-                            <button id="edit-button" data-modal-target="edit-user-modal" data-modal-toggle="edit-user-modal" data-original-icon class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-username="{{ $user->username }}" data-user-email="{{ $user->email }}" data-user-jabatan="{{ $user->jabatan }}" data-user-department="{{ $user->department ? $user->department->id : '' }}" data-user-tahun-masuk="{{ $user->tahun_masuk }}" data-user-status="{{ $user->status }}" data-user-role="{{$user->role}}">
+                            <button id="edit-button" data-modal-target="edit-user-modal" data-modal-toggle="edit-user-modal" data-original-icon class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" data-user-id="{{ $department->id }}" data-user-name="{{ $department->nama }}" data-user-leader="{{ $department->pemimpin_id }}"  data-user-status="{{ $department->status }}">
                                 Edit
                             </button>
                             <button
                                 data-modal-target="deleteModal" data-modal-toggle="deleteModal"
-                                data-delete-id="{{ $user->id }}"
+                                data-delete-id="{{ $department->id }}"
                                 data-original-icon class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" type="button">
                                 Delete
                             </button>
@@ -248,7 +200,7 @@
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Add User
+                            Add Department
                         </h3>
                         <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="add-user-modal">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -260,21 +212,19 @@
 
                     <!-- Modal body -->
                     <div class="p-7 md:p-10">
-                        <form action="{{route('store.user')}}" method="POST">
+                        <form action="{{route('store.department')}}" method="POST">
                             @csrf
                             <div class="mb-4">
                                 <label for="name" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Name</label>
                                 <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
                             </div>
                             <div class="mb-4">
-                                <label for="username" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Username</label>
-                                <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="role" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Role</label>
-                                <select name="role" id="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
-                                    <option value="user" selected>User</option>
-                                    <option value="admin">Admin</option>
+                                <label for="manager" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Manager</label>
+                                <select name="manager" id="manager" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                                    <option value="">Select Manager</option>
+                                    @foreach ($users as $user)
+                                    <option value="{{$user->id}}">{{$user->name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="flex justify-end">
@@ -296,7 +246,7 @@
                     <!-- Modal Header -->
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            Edit User
+                            Edit Department
                         </h3>
                         <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-700 dark:hover:text-white" data-modal-toggle="edit-user-modal">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -308,7 +258,7 @@
                     <!-- Modal Body -->
                     <div class="modal-content p-6 space-y-6 border-s border-gray-200 dark:border-gray-900 flex-1 overflow-y-auto">
                         <!-- Edit User Form -->
-                        <form id="editUserForm" action="{{ route('update.user', ':id') }}" method="POST" enctype="multipart/form-data">
+                        <form id="editUserForm" action="{{ route('update.user', ':id') }}" method="POST">
                             @csrf
                             @method('PUT')
                             <div class="mb-4">
@@ -316,52 +266,21 @@
                                 <input type="text" name="name" id="edit-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
                             </div>
                             <div class="mb-4">
-                                <label for="username" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Username</label>
-                                <input type="text" name="username" id="edit-username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="email" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Email</label>
-                                <input type="email" name="email" id="edit-email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                            </div>
-                            <div class="mb-4">
-                                <label for="jabatan" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Jabatan</label>
-                                <input type="text" name="jabatan" id="edit-jabatan" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                            </div>
-                            <div class="mb-4">
-                                <label for="password" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Password</label>
-                                <input type="password" name="password" id="edit-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                            </div>
-                            <div class="mb-4">
-                                <label for="department" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Department</label>
-                                <select name="department_id" id="edit-department" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <label for="manager" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Department</label>
+                                <select name="manager_id" id="edit-manager" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">
-                                        Select Department
+                                        Select Manager
                                     </option>
-                                    @foreach ($departments as $department)
-                                    <option value="{{$department->id}}">{{$department->nama}}</option>
+                                    @foreach ($users as $user)
+                                    <option value="{{$user->id}}">{{$user->name}}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                            <div class="mb-4">
-                                <label for="tahun_masuk" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Tahun Masuk</label>
-                                <input type="month" name="tahun_masuk" id="edit-tahun_masuk" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                            </div>
-                            <div class="mb-4">
-                                <label for="ttd" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Tanda Tangan</label>
-                                <input type="file" name="ttd" id="edit-ttd" accept=".png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             </div>
                             <div class="mb-4">
                                 <label for="status" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Status</label>
                                 <select name="status" id="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option id="status-active" value="active">Active</option>
                                     <option id="status-inactive" value="inactive">Inactive</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label for="role" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Role</label>
-                                <select name="role" id="edit-role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                                    <option id="role-user" value="user">User</option>
-                                    <option id="role-admin" value="admin">Admin</option>
                                 </select>
                             </div>
                             <div class="flex justify-end">
@@ -394,7 +313,7 @@
                     </svg>
 
                     <!-- Modal text -->
-                    <p class="mb-4 text-gray-500 dark:text-gray-300">Are you sure you want to delete this user?</p>
+                    <p class="mb-4 text-gray-500 dark:text-gray-300">Are you sure you want to delete this department?</p>
 
                     <!-- Buttons -->
                     <div class="flex justify-center items-center space-x-4">
@@ -415,7 +334,7 @@
 
 
         <div class="p-4">
-            {{ $users->links() }}
+            {{ $departments->links() }}
         </div>
     </section>
 
@@ -424,65 +343,35 @@
             // handle edit modal
             document.querySelectorAll('[data-user-id]').forEach(button => {
                 button.addEventListener('click', function() {
-                    console.log(this.getAttribute('data-user-id'));
+                    // console.log(this.getAttribute('data-user-id'));
                     const id = this.getAttribute('data-user-id');
                     const name = this.getAttribute('data-user-name');
-                    const username = this.getAttribute('data-user-username');
-                    const role = this.getAttribute('data-user-role');
                     const status = this.getAttribute('data-user-status');
-                    const jabatan = this.getAttribute('data-user-jabatan');
-                    const department = this.getAttribute('data-user-department');
-                    const tahun_masuk = this.getAttribute('data-user-tahun-masuk');
-                    const email = this.getAttribute('data-user-email');
-
-                    console.log('User ID:', id);
-                    console.log('Name:', name);
-                    console.log('Username:', username);
-                    console.log('Email:', email);
-                    console.log('Role:', role);
-                    console.log('Tahun Masuk:', tahun_masuk);
-
+                    const leader = this.getAttribute('data-user-leader');
 
                     // Populate the update modal with user data
                     const updateForm = document.getElementById('editUserForm');
                     if (updateForm) {
                         // Set the action URL for form submission
-                        const url = "{{ route('update.user', ':id') }}".replace(':id', id);
+                        const url = "{{ route('update.department', ':id') }}".replace(':id', id);
                         updateForm.action = url;
 
                         // Populate form fields
                         document.getElementById('edit-name').value = name;
-                        document.getElementById('edit-username').value = username;
-                        document.getElementById('edit-jabatan').value = jabatan;
-                        document.getElementById('edit-email').value = email
-
 
                         // Fill department select
-                        const departmentSelect = document.getElementById('edit-department');
+                        const departmentSelect = document.getElementById('edit-manager');
                         if (departmentSelect) {
                             Array.from(departmentSelect.options).forEach(option => {
-                                option.selected = option.value === department;
+                                option.selected = option.value === leader;
                             });
                         }
-
-                        // Fill tahun_masuk
-                        document.getElementById('edit-tahun_masuk').value = null;
-
-                        document.getElementById('edit-ttd').value = "";
 
                         // Fill status select
                         const statusSelect = document.getElementById('status');
                         if (statusSelect) {
                             Array.from(statusSelect.options).forEach(option => {
                                 option.selected = option.value === status;
-                            });
-                        }
-
-                        // Fill role select (if applicable)
-                        const roleSelect = document.getElementById('edit-role');
-                        if (roleSelect) {
-                            Array.from(roleSelect.options).forEach(option => {
-                                option.selected = option.value === role;
                             });
                         }
                     }
@@ -501,7 +390,7 @@
                     console.log(id);
                     const deleteForm = document.getElementById('delete-form');
                     if (deleteForm) {
-                        deleteForm.action = "{{ route('destroy.user', ':id') }}".replace(':id', id);
+                        deleteForm.action = "{{ route('destroy.department', ':id') }}".replace(':id', id);
                     }
                 });
             });

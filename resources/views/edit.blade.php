@@ -143,22 +143,33 @@
       </div>
       @endif
 
+      @if(Auth::user()->role == 'admin')
+      @if($data->revision_it)
+      <div class="mb-10">
+        <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Revisi untuk IT</label>
+        <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed" disabled>{{ $data->revision_it }}</textarea>
+      </div>
+      @endif
+      @elseif (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name)
+      @if($data->revision_user)
+      <div class="mb-10">
+        <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Revisi untuk User</label>
+        <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed" disabled>{{ $data->revision_user }}</textarea>
+      </div>
+      @endif
+      @endif
+
       <input type="hidden" name="dataArray" id="dataArray" value="">
       <input type="hidden" name="status" id="status" value="">
 
-      <div class="mb-10">
-        <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your message</label>
-        <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..."></textarea>
-      </div>
-
       <div class="flex items-end justify-end space-x-6">
-        @if ((Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name) && ($data->status == 'acc0' || $data->status == 'acc-2' || $data->status == 'acc1'))
+        @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && $data->status == 'acc1'))
         <button type="button" id="disapproveBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Disapprove</button>
         @endif
         @if (Auth::user()->role == 'admin' || Auth::user()->name != Auth::user()->department->leader->name)
         <button type="button" id="simpanBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Simpan</button>
         @endif
-        @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name) && ($data->status == 'acc1' || $data->status == 'acc-2'))
+        @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && ($data->status == 'acc1' || $data->status == 'acc-2')))
         <button type="button" id="approveBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Approve</button>
         @endif
       </div>
@@ -177,8 +188,9 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
               <h3 id="modalMessage" class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Apakah data yang diisi sudah benar?</h3>
+              <textarea id="revisi" rows="4" name="revisi" class="mb-4 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Masukan revisi"></textarea>
               <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-red-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
-              <button data-modal-hide="popup-modal" type="submit" class="ms-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+              <button id='complete' data-modal-hide="popup-modal" type="submit" class="ms-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                 Yes, I'm sure
               </button>
             </div>
@@ -204,7 +216,7 @@
             </button>
           </div>
           <!-- Modal body -->
-          <form class="p-4 md:p-5">
+          <div class="p-4 md:p-5">
             <div class="grid gap-4 mb-4 grid-cols-2">
               <div class="col-span-2">
                 <label for="spec2" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama spesifikasi</label>
@@ -239,7 +251,7 @@
                 Edit
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
@@ -252,17 +264,22 @@
     const modal = new Modal(modalElement); // Initialize the Flowbite modal
     const addButton = document.getElementById('add');
     const tableBody = document.querySelector('tbody');
-    const rawData = JSON.parse(document.getElementById('barangData').value);
+    const form = document.querySelector('form');
+    const buttonSbmt = document.getElementById('complete');
     const user = '{{ Auth::user()->role }}'
+    let dataArray = [];
 
-    let dataArray = rawData.map(item => ({
-      nama: item.nama,
-      jumlah: item.jumlah,
-      satuan: item.satuan,
-      tanggal_diperlukan: formatDate(item.tanggal_diperlukan), // Convert the date
-      keterangan_it: item.keterangan_it
-    }));
-    console.log(dataArray);
+    if ('{{ Auth::user()->role }}' == 'admin' || '{{Auth::user()->name}}' == '{{Auth::user()->department->leader->name}}') {
+      const rawData = JSON.parse(document.getElementById('barangData').value);
+
+      dataArray = rawData.map(item => ({
+        nama: item.nama,
+        jumlah: item.jumlah,
+        satuan: item.satuan,
+        tanggal_diperlukan: formatDate(item.tanggal_diperlukan), // Convert the date
+        keterangan_it: item.keterangan_it
+      }));
+    }
 
     updateHiddenInput();
 
@@ -407,29 +424,52 @@
     const disapproveBtn = document.getElementById('disapproveBtn');
     const approveBtn = document.getElementById('approveBtn');
     const simpanBtn = document.getElementById('simpanBtn');
+    const revisi = document.getElementById('revisi');
 
     if (disapproveBtn) {
       document.getElementById('disapproveBtn').addEventListener('click', function() {
         statusInput.value = 'disapprove';
         modalMessage.innerText = 'Are you sure you want to disapprove this data?';
+
+        // Show the textarea and make it required
+        revisi.classList.remove('hidden');
       });
     }
 
     if (simpanBtn) {
-      if (user == 'admin') {
-        document.getElementById('simpanBtn').addEventListener('click', function() {
+      document.getElementById('simpanBtn').addEventListener('click', function() {
+        if (user == 'admin' || ('{{ Auth::user()->role }}' == 'user' || '{{Auth::user()->name}}' != '{{Auth::user()->department->leader->name}}')) {
           statusInput.value = 'simpan';
           modalMessage.innerText = 'Are you sure you want to save this data?';
-        });
-      }
+
+          // Hide the textarea and remove the required attribute
+          revisi.classList.add('hidden');
+        }
+      });
     }
 
     if (approveBtn) {
       document.getElementById('approveBtn').addEventListener('click', function() {
         statusInput.value = 'approve';
         modalMessage.innerText = 'Are you sure you want to approve this data?';
+
+        // Hide the textarea and remove the required attribute
+        revisi.classList.add('hidden');
       });
     }
+
+    buttonSbmt.addEventListener('submit', function(event) {
+      // Check if the textarea is visible
+      if (!revisi.classList.contains('hidden')) {
+        // Check if the value is empty, null, or only whitespace
+        if (revisi.value.trim() === '') {
+          event.preventDefault(); // Prevent form submission
+          alert('Please enter a valid revision.'); // Show an alert or handle accordingly
+          revisi.focus(); // Focus on the textarea
+        }
+      }
+    });
+
 
     setTimeout(() => {
       const alertElement = document.getElementById('alert');

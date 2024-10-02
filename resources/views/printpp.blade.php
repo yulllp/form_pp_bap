@@ -16,9 +16,10 @@
             transform-origin: top left;
         }
 
-        .di{
+        .di {
             text-align: center;
         }
+
         @page {
             size: A4 portrait;
             margin: 0;
@@ -102,7 +103,7 @@
             border: 1px solid black;
         }
 
-        img{
+        img {
             width: 85px;
             height: 60px;
         }
@@ -175,46 +176,27 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($pp->barang as $key => $data)
                     <tr>
-                        <td>1</td>
-                        <td>Laptop intel core i5, ram 8gb, ssd 256gb</td>
-                        <td>1</td>
-                        <td>pcs</td>
-                        <td>26-09-2024</td>
-                        <td>DISI OLEH IT</td>
+                        <td>{{ $key + 1 }}</td> <!-- Row number -->
+                        <td>{{ $data->nama ?? 'DISI OLEH IT' }}</td>
+                        <td>{{ $data->jumlah ?? 'DISI OLEH IT' }}</td>
+                        <td>{{ $data->satuan ?? 'DISI OLEH IT' }}</td>
+                        <td>{{ \Carbon\Carbon::parse($data->tanggal_diperlukan)->format('d-m-Y') ?? 'DISI OLEH IT' }}</td>
+                        <td>{{ $data->keterangan_it ?? 'DISI OLEH IT' }}</td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                        <td>DISI OLEH IT</td>
-                    </tr>
+                    @endforeach
+
+                    @for($i = count($pp->barang); $i < 5; $i++)
+                        <tr>
+                        <td style="color: white;">.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        @endfor
                 </tbody>
             </table>
 
@@ -227,12 +209,22 @@
                 </tr>
                 <tr>
                     <td class="ttd">
-                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/'.$pp->user->ttd))); ?>" >
+                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $pp->user->ttd))); ?>">
                     </td>
                     <td class="ttd">
                         TTD DIGITAL
                     </td>
                     <td class="ttd">TTD DIGITAL</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        NAMA
+                    </td>
+                    <td>
+                        NAMA
+                    </td>
+                    <td>NAMA</td>
                 </tr>
             </table>
 

@@ -101,6 +101,7 @@ class PermintaanController extends Controller
                 $pp = PermintaanPembelian::findOrFail($id);
                 $pp->pt_tujuan_id = $validated['pt_tujuan_id'];
                 $pp->alasan = $validated['alasan'];
+                $pp->status = 'acc0';
                 $pp->save();
                 return redirect()->route('permintaan.edit', $id)->with('success', 'Permintaan pembelian berhasil di edit!');
             } catch (\Exception $e) {
@@ -111,7 +112,7 @@ class PermintaanController extends Controller
             try {
                 $validated = $request->validate([
                     'dataArray' => 'required|json',
-                    'status' => 'required|string'
+                    'status' => 'required|string',
                 ]);
 
                 $dataArray = json_decode($validated['dataArray'], true);
@@ -171,6 +172,7 @@ class PermintaanController extends Controller
                     $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
                     $dataPP->status = 'acc1';
                     $dataPP->it_confirm_date = Carbon::now();
+                    $dataPP->revision_user = null;
                     $dataPP->save();
 
                     return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian diapprove!');
@@ -178,6 +180,10 @@ class PermintaanController extends Controller
                     $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
                     $dataPP->status = 'acc-1';
                     $dataPP->it_confirm_date = Carbon::now();
+                    $revisi = $request->validate([
+                        'revisi' => 'nullable|string'
+                    ]);
+                    $dataPP->revision_user = $revisi['revisi'];
                     $dataPP->save();
                     return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian disapprove!');
                 }
@@ -187,23 +193,26 @@ class PermintaanController extends Controller
                 dd($e->getMessage());
                 return back()->withErrors(['error' => 'Validation error: ' . $e->getMessage()]);
             }
-        }
-
-        elseif (Auth::user()->name == Auth::user()->department->leader->name) {
+        } elseif (Auth::user()->name == Auth::user()->department->leader->name) {
             $validated = $request->validate([
-                'status' => 'required|string'
+                'status' => 'required|string',
             ]);
 
             if ($validated['status'] == 'approve') {
                 $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
                 $dataPP->status = 'acc2';
                 $dataPP->manager_confirm_date = Carbon::now();
+                $dataPP->revision_it = null;
                 $dataPP->save();
-                return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian diapprove!');
+                return redirect()->route('history', $id)->with('success', 'Permintaan pembelian diapprove!');
             } elseif ($validated['status'] == 'disapprove') {
                 $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
                 $dataPP->status = 'acc-2';
                 $dataPP->manager_confirm_date = Carbon::now();
+                $revisi = $request->validate([
+                    'revisi' => 'nullable|string'
+                ]);
+                $dataPP->revision_it = $revisi['revisi'];
                 $dataPP->save();
                 return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian disapprove!');
             }
@@ -213,9 +222,8 @@ class PermintaanController extends Controller
 
     public function printpp($id)
     {
-        $pp = PermintaanPembelian::with(['user', 'pt_tujuan'])->find($id);
-        $html = view('printpp', compact('pp'))->render();
-
+        $pp = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang'])->find($id);
+        $html = view('printpp', compact('pp', ))->render();
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');

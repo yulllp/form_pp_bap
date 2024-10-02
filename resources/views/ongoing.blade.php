@@ -26,6 +26,11 @@
             <th scope="col" class="px-6 py-3">
               Alasan permintaan
             </th>
+            @if (Auth::user()->role == 'admin' || (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name))
+            <th scope="col" class="px-6 py-3">
+              Revisi
+            </th>
+            @endif
             <th scope="col" class="px-6 py-3">
               Aksi
             </th>
@@ -54,6 +59,15 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->alasan }}
             </td>
+            @if (Auth::user()->role == 'admin')
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ $data->revision_it ? 'ada' : '-' }}
+            </td>
+            @elseif (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name)
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ $data->revision_user ? 'ada' : '-' }}
+            </td>
+            @endif
             <td class="px-6 py-4 flex space-x-3">
               <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal" data-original-icon data-status="{{ $data->status }}" data-create="{{ $data->created_at }}" data-confirm-it="{{ $data->it_confirm_date }}" data-confirm-manager="{{ $data->manager_confirm_date }}" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                 Status
@@ -65,7 +79,7 @@
                 </button>
               </a>
               @endif
-              @if ((Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name) && ($data->status == 'acc0' || $data->status == 'acc-2' || $data->status == 'acc-1' || $data->status == 'acc1'))
+              @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && ($data->status == 'acc1' || $data->status == 'acc-2')))
               <a href="{{ route('permintaan.approval', $data->id) }}">
                 <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                   Approval
@@ -128,7 +142,7 @@
                   </svg>
                 </span>
                 <h3 class="font-medium leading-tight">Menunggu konfirmasi dari Manager</h3>
-                <p class="text-sm">Menunggu proses dari IT</p>
+                <p class="text-sm">Data masih diproses IT</p>
               </li>
             </ol>
           </div>
@@ -157,6 +171,7 @@
       if (status === 'acc0') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
         setStepInProgress1(1, 'Menunggu konfirmasi dari Pihak IT', 'Konfirmasi akan dikirimi ke email anda');
+        setDefault(2, 'Menunggu konfirmasi dari Manager', 'Data masih diproses IT');
       } else if (status === 'acc1') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
         setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
@@ -166,8 +181,9 @@
         setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
         setStepComplete(2, 'Konfirmasi dari Manager selesai', `Data dikonfirm pada ${manager_confirm_date}`);
       } else if (status === 'acc-1') {
-        setStepInProgress1(0, 'Terdapat kesalahan pada data user', 'Menunggu pembaharuan dari user');
+        setStepInProgress1(0, 'Terdapat kesalahan pada data user', 'Menunggu revisi data user');
         displayRedCross(1, 'Permintaan ditolak oleh IT', `Data ditolak pada ${it_confirm_date}. Silahkan menghubungi pihak IT`)
+        setDefault(2, 'Menunggu konfirmasi dari Manager', 'Data masih diproses IT');
       } else if (status === 'acc-2') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
         setStepInProgress1(1, 'Revisi dari Pihak IT', 'Silahkan menunggu pemberitahuan pihak IT');
@@ -226,6 +242,17 @@
     step.querySelector('svg').innerHTML = `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1l14 14m0-14L1 15" />
               </svg>`;
+    step.querySelector('h3').textContent = title;
+    step.querySelector('p').innerHTML = sub;
+  }
+
+  function setDefault(stepIndex, title, sub) {
+    const step = document.querySelectorAll('.step')[stepIndex];
+    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700';
+    step.querySelector('svg').className = 'w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400';
+    step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                    <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                  </svg>`
     step.querySelector('h3').textContent = title;
     step.querySelector('p').innerHTML = sub;
   }
