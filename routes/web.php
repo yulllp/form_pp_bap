@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\OngoingController;
 use App\Http\Controllers\PermintaanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Models\BeritaAcara;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -57,4 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/companies',[CompanyController::class,'store'])->name('store.company');
     Route::put('/admin/companies/{id}',[CompanyController::class,'update'])->name('update.company');
     Route::delete('/admin/companies/{id}',[CompanyController::class,'destroy'])->name('destroy.company');
+    Route::get('/create/berita', [DashboardController::class, 'showForm'])->name('form.bap');
+    Route::post('/create/berita', [BeritaController::class, 'store'])->name('store.bap');
+    Route::get('/edit/berita/{id}', [DashboardController::class, 'showEditForm'])->name('editform.bap');
 });

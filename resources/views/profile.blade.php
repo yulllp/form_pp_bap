@@ -134,7 +134,6 @@
                     </div>
                     <div class="mb-4">
                         <label class="block font-semibold text-gray-700 dark:text-gray-300">Signature:</label>
-                        
                     </div>
                     <div class="mb-4">
                     @if($user->ttd)
