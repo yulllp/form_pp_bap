@@ -22,7 +22,7 @@
 <body>
     <h3>{{$msg->user->name}} telah mengajukan Permintaan Pembelian Internal - IT</h3>
     <h3>Klik tombol dibawah untuk approve pengajuan {{$msg->user->name}}</h3>
-    <a href="http://127.0.0.1:8000/approve/{{$msg->id}}" class="button">
+    <a href="http://127.0.0.1:8000/approval/permintaan/{{$msg->id}}" class="button">
         Click Here
     </a>
 </body>

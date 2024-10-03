@@ -12,7 +12,7 @@
             <th scope="col" class="px-6 py-3">
               No PPI
             </th>
-            @if (Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name)
+            @if (Auth::user()->department->nama == 'IT' || Auth::user()->name == Auth::user()->department->leader->name)
             <th scope="col" class="px-6 py-3">
               Nama
             </th>
@@ -26,7 +26,7 @@
             <th scope="col" class="px-6 py-3">
               Alasan permintaan
             </th>
-            @if (Auth::user()->role == 'admin' || (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name))
+            @if (Auth::user()->department->nama == 'IT' || (Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name))
             <th scope="col" class="px-6 py-3">
               Revisi
             </th>
@@ -45,7 +45,7 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->nomor }}
             </td>
-            @if (Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name)
+            @if (Auth::user()->department->nama == 'IT' || Auth::user()->name == Auth::user()->department->leader->name)
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->user->name }}
             </td>
@@ -57,29 +57,29 @@
               {{ $data->pt_tujuan->name }}
             </td>
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-              {{ $data->alasan }}
+              {{ \Illuminate\Support\Str::limit($data->alasan, 50, '...') }}
             </td>
-            @if (Auth::user()->role == 'admin')
+            @if (Auth::user()->department->nama == 'IT')
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-              {{ $data->revision_it ? 'ada' : '-' }}
+              {{ $data->revision_it ? 'ada, silahkan lakukan pengeditan' : '-' }}
             </td>
-            @elseif (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name)
+            @elseif (Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name)
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-              {{ $data->revision_user ? 'ada' : '-' }}
+              {{ $data->revision_user ? 'ada, silahkan lakukan pengeditan' : '-' }}
             </td>
             @endif
             <td class="px-6 py-4 flex space-x-3">
               <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal" data-original-icon data-status="{{ $data->status }}" data-create="{{ $data->created_at }}" data-confirm-it="{{ $data->it_confirm_date }}" data-confirm-manager="{{ $data->manager_confirm_date }}" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                 Status
               </button>
-              @if ((Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name) && ($data->status == 'acc0' || $data->status == 'acc-1'))
+              @if ((Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name) && ($data->status == 'acc0' || $data->status == 'acc-1'))
               <a href="{{ route('permintaan.edit', $data->id) }}">
                 <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                   Edit
                 </button>
               </a>
               @endif
-              @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && ($data->status == 'acc1' || $data->status == 'acc-2')))
+              @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && ($data->status == 'acc1' || $data->status == 'acc-2')))
               <a href="{{ route('permintaan.approval', $data->id) }}">
                 <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                   Approval
@@ -175,7 +175,7 @@
       } else if (status === 'acc1') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
         setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
-        setStepInProgress2(2, 'Menunggu konfirmasi dari Manager');
+        setStepInProgress2(2, 'Menunggu konfirmasi dari Manager', 'Data sedang diproses manager');
       } else if (status === 'acc2') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
         setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);

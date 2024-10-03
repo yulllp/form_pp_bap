@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ApproveMail;
+use App\Mail\ApproveMailIT;
 use App\Models\Barang;
 use App\Models\PermintaanPembelian;
 use Dompdf\Dompdf;
@@ -86,12 +87,12 @@ class PermintaanController extends Controller
     {
         $pt_tujuan = PtTujuan::all();
         $dataPP = PermintaanPembelian::with(['user', 'barang', 'pt_tujuan'])->findOrFail($id);
-        return view('edit', ['data' => $dataPP, 'title' => 'Edit permintaan', 'pts' => $pt_tujuan]);
+        return view('edit', ['data' => $dataPP, 'title' => 'Edit permintaan', 'pts' => $pt_tujuan, 'barangData' => $dataPP->barang]);
     }
 
     public function update(Request $request, $id)
     {
-        if (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name) {
+        if (Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name) {
             try {
                 $validated = $request->validate([
                     'pt_tujuan_id' => 'required|exists:pt_tujuans,id',
@@ -108,7 +109,7 @@ class PermintaanController extends Controller
                 dd($e->getMessage());
                 return back()->withErrors(['error' => 'Validation error: ' . $e->getMessage()]);
             }
-        } elseif (Auth::user()->role == 'admin') {
+        } elseif (Auth::user()->department->nama == 'IT') {
             try {
                 $validated = $request->validate([
                     'dataArray' => 'required|json',
@@ -169,22 +170,36 @@ class PermintaanController extends Controller
                 }
 
                 if ($validated['status'] == 'approve') {
-                    $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
+                    $dataPP = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang', 'approval'])->findOrFail($id);
                     $dataPP->status = 'acc1';
                     $dataPP->it_confirm_date = Carbon::now();
                     $dataPP->revision_user = null;
+                    $dataPP->approval_id = Auth::user()->id;
                     $dataPP->save();
+
+                    $to = "itsupport@imligroup.com";
+                    $msg = $dataPP;
+                    $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+                    Mail::to($to)->send(new ApproveMailIT($msg, $subject));
 
                     return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian diapprove!');
                 } elseif ($validated['status'] == 'disapprove') {
-                    $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
+                    $dataPP = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang', 'approval'])->findOrFail($id);
                     $dataPP->status = 'acc-1';
                     $dataPP->it_confirm_date = Carbon::now();
                     $revisi = $request->validate([
                         'revisi' => 'nullable|string'
                     ]);
                     $dataPP->revision_user = $revisi['revisi'];
+                    $dataPP->approval_id = Auth::user()->id;
                     $dataPP->save();
+
+                    $to = "itsupport@imligroup.com";
+                    $msg = $dataPP;
+                    $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+                    Mail::to($to)->send(new ApproveMailIT($msg, $subject));
                     return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian disapprove!');
                 }
 
@@ -222,8 +237,8 @@ class PermintaanController extends Controller
 
     public function printpp($id)
     {
-        $pp = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang'])->find($id);
-        $html = view('printpp', compact('pp', ))->render();
+        $pp = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang', 'approval'])->find($id);
+        $html = view('printpp', compact('pp'))->render();
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');

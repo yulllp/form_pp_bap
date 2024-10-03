@@ -12,9 +12,9 @@ class OngoingController extends Controller
     public function index()
     {
         $user = User::with(['department'])->find(Auth::id());
-        if (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name) {
+        if (Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name) {
             $data = PermintaanPembelian::with('pt_tujuan')->whereNot('status', 'acc2')->where('user_id', Auth::user()->id)->latest()->paginate(20);
-        } elseif (Auth::user()->role == 'admin') {
+        } elseif (Auth::user()->department->nama == 'IT') {
             $data = PermintaanPembelian::with('pt_tujuan')->whereIn('status', ['acc0', 'acc-2', 'acc-1', 'acc1'])->latest()->paginate(20);
         } elseif (Auth::user()->name == Auth::user()->department->leader->name) {
             $data = PermintaanPembelian::with('pt_tujuan', 'user')

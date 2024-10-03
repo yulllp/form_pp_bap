@@ -35,6 +35,11 @@ class PermintaanPembelian extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function approval() : BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approval_id');
+    }
+
     public function barang() : HasMany
     {
         return $this->hasMany(Barang::class, 'pp_id');

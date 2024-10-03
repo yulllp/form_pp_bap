@@ -43,10 +43,10 @@
         <div>
           <label for="pt_tujuan_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pembelian untuk PT</label>
           <select id="pt_tujuan_id" name="pt_tujuan_id"
-            class="{{ Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name 
+            class="{{ Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name 
       ? 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' 
       : 'bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed' }}"
-            {{ Auth::user()->role != 'user' || Auth::user()->name == Auth::user()->department->leader->name ? 'disabled' : '' }} required>
+            {{ Auth::user()->department->nama == 'IT' || Auth::user()->name == Auth::user()->department->leader->name ? 'disabled' : '' }} required>
             @foreach($pts as $pt)
             <option value="{{ $pt->id }}" {{ $pt->name == $data->pt_tujuan->name ? 'selected' : '' }}>
               {{ $pt->name }}
@@ -57,22 +57,22 @@
         <div class="md:col-span-2">
           <label for="alasan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alasan permintaan</label>
           <textarea id="alasan" rows="4" name="alasan"
-            class="{{ Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name 
+            class="{{ Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name 
       ? 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' 
       : 'bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed' }}"
             placeholder="Masukan alasan"
-            {{ Auth::user()->role != 'user' || Auth::user()->name == Auth::user()->department->leader->name ? 'disabled' : '' }} required>{{ $data->alasan }}</textarea>
+            {{ Auth::user()->department->nama == 'IT' || Auth::user()->name == Auth::user()->department->leader->name ? 'disabled' : '' }} required>{{ $data->alasan }}</textarea>
         </div>
       </div>
 
-      @if (Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name)
+      @if (Auth::user()->department->nama == 'IT' || Auth::user()->name == Auth::user()->department->leader->name)
       <input type="hidden" id="barangData" value="{{json_encode($barangData)}}">
       <div>
         <h1 class="block mb-2 text-md font-medium text-gray-900 dark:text-white">Keterangan Barang</h1>
       </div>
       @endif
 
-      @if (Auth::user()->role == 'admin')
+      @if (Auth::user()->department->nama == 'IT')
       <div class="grid gap-6 mb-10 md:grid-cols-2 lg:grid-cols-9">
         <div class="col-span-2">
           <label for="spec" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama spesifikasi</label>
@@ -107,7 +107,7 @@
       </div>
       @endif
 
-      @if (Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name)
+      @if (Auth::user()->department->nama == 'IT' || Auth::user()->name == Auth::user()->department->leader->name)
       <div class="overflow-auto shadow-md sm:rounded-lg mb-10">
         <table class="table w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -130,7 +130,7 @@
               <th scope="col" class="px-6 py-3">
                 Keterangan IT
               </th>
-              @if (Auth::user()->role == 'admin')
+              @if (Auth::user()->department->nama == 'IT')
               <th scope="col" class="px-6 py-3">
                 Aksi
               </th>
@@ -143,14 +143,14 @@
       </div>
       @endif
 
-      @if(Auth::user()->role == 'admin')
+      @if(Auth::user()->department->nama == 'IT')
       @if($data->revision_it)
       <div class="mb-10">
         <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Revisi untuk IT</label>
         <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed" disabled>{{ $data->revision_it }}</textarea>
       </div>
       @endif
-      @elseif (Auth::user()->role == 'user' && Auth::user()->name != Auth::user()->department->leader->name)
+      @elseif (Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name)
       @if($data->revision_user)
       <div class="mb-10">
         <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Revisi untuk User</label>
@@ -163,13 +163,13 @@
       <input type="hidden" name="status" id="status" value="">
 
       <div class="flex items-end justify-end space-x-6">
-        @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && $data->status == 'acc1'))
+        @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && $data->status == 'acc1'))
         <button type="button" id="disapproveBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Disapprove</button>
         @endif
-        @if (Auth::user()->role == 'admin' || Auth::user()->name != Auth::user()->department->leader->name)
+        @if (Auth::user()->department->nama == 'IT' || Auth::user()->name != Auth::user()->department->leader->name)
         <button type="button" id="simpanBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Simpan</button>
         @endif
-        @if ((Auth::user()->role == 'admin' && ($data->status == 'acc0' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && ($data->status == 'acc1' || $data->status == 'acc-2')))
+        @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && ($data->status == 'acc1' || $data->status == 'acc-2')))
         <button type="button" id="approveBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Approve</button>
         @endif
       </div>
@@ -266,10 +266,10 @@
     const tableBody = document.querySelector('tbody');
     const form = document.querySelector('form');
     const buttonSbmt = document.getElementById('complete');
-    const user = '{{ Auth::user()->role }}'
+    const user = '{{ Auth::user()->department->nama }}'
     let dataArray = [];
 
-    if ('{{ Auth::user()->role }}' == 'admin' || '{{Auth::user()->name}}' == '{{Auth::user()->department->leader->name}}') {
+    if ('{{ Auth::user()->department->nama }}' == 'IT' || '{{Auth::user()->name}}' == '{{Auth::user()->department->leader->name}}') {
       const rawData = JSON.parse(document.getElementById('barangData').value);
 
       dataArray = rawData.map(item => ({
@@ -292,7 +292,7 @@
 
     function updateHiddenInput() {
       const hiddenInput = document.getElementById('dataArray');
-      if (user == 'admin') {
+      if (user == 'IT') {
         hiddenInput.value = JSON.stringify(dataArray);
       } else {
 
@@ -301,7 +301,7 @@
 
     // Function to render the table
     function renderTable() {
-      if ('{{ Auth::user()->role }}' == 'admin' || '{{Auth::user()->name}}' == '{{Auth::user()->department->leader->name}}') {
+      if ('{{ Auth::user()->department->nama }}' == 'IT' || '{{Auth::user()->name}}' == '{{Auth::user()->department->leader->name}}') {
         tableBody.innerHTML = '';
         dataArray.forEach((rowData, index) => {
           const row = document.createElement('tr');
@@ -313,26 +313,28 @@
         <td class="px-6 py-4">${rowData.satuan}</td>
         <td class="px-6 py-4">${rowData.tanggal_diperlukan}</td>
         <td class="px-6 py-4">${rowData.keterangan_it}</td>
-        @if (Auth::user()->role == 'admin')
+        @if (Auth::user()->department->nama == 'IT')
           <td class="flex px-6 py-4">
           <button type="button" class="edit-button text-blue-600 hover:underline mr-5" data-index="${index}">Edit</button>
           <button type="button" class="delete-button text-red-600 hover:underline">Delete</button>
           </td>  
         @endif
-      `;
+      `; 
           tableBody.appendChild(row);
 
-          const deleteButton = row.querySelector('.delete-button');
-          deleteButton.addEventListener('click', function() {
-            deleteRow(index);
-          });
+          if (user == 'IT') {
+            const deleteButton = row.querySelector('.delete-button');
+            deleteButton.addEventListener('click', function() {
+              deleteRow(index);
+            });
 
-          const editButton = row.querySelector('.edit-button');
-          editButton.addEventListener('click', function() {
-            currentEditIndex = index; // Save the index of the row being edited
-            openModalWithData(rowData);
-            modal.show(); // Show the modal when edit is clicked
-          });
+            const editButton = row.querySelector('.edit-button');
+            editButton.addEventListener('click', function() {
+              currentEditIndex = index; // Save the index of the row being edited
+              openModalWithData(rowData);
+              modal.show(); // Show the modal when edit is clicked
+            });
+          }
         });
       }
     }
@@ -376,7 +378,7 @@
     }
 
     // Add click event to the "Add" button
-    if (user == 'admin') {
+    if (user == 'IT') {
       addButton.addEventListener('click', function() {
         addRow();
       });
@@ -438,7 +440,7 @@
 
     if (simpanBtn) {
       document.getElementById('simpanBtn').addEventListener('click', function() {
-        if (user == 'admin' || ('{{ Auth::user()->role }}' == 'user' || '{{Auth::user()->name}}' != '{{Auth::user()->department->leader->name}}')) {
+        if (user == 'IT' || ('{{ Auth::user()->department->nama }}' != 'IT' || '{{ Auth::user()->name }}' != '{{ Auth::user()->department->leader->name }}')) {
           statusInput.value = 'simpan';
           modalMessage.innerText = 'Are you sure you want to save this data?';
 

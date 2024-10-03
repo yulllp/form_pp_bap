@@ -92,6 +92,10 @@
             text-align: center;
         }
 
+        .ttd-name {
+            text-align: center;
+        }
+
         p {
             text-align: center;
             font-size: 12px;
@@ -176,7 +180,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($pp->barang as $key => $data)
+                    @foreach($pp->barang->reverse() as $key => $data)
                     <tr>
                         <td>{{ $key + 1 }}</td> <!-- Row number -->
                         <td>{{ $data->nama ?? 'DISI OLEH IT' }}</td>
@@ -209,22 +213,38 @@
                 </tr>
                 <tr>
                     <td class="ttd">
+                        @if ($pp->user->ttd)
                         <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $pp->user->ttd))); ?>">
+                        @endif
                     </td>
                     <td class="ttd">
-                        TTD DIGITAL
+                        @if ($pp->approval->ttd && ($pp->status == 'acc1' || $pp->status == 'acc-2' || $pp->status == 'acc2'))
+                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $pp->approval->ttd))); ?>">
+                        @endif
                     </td>
-                    <td class="ttd">TTD DIGITAL</td>
+                    <td class="ttd">
+                        @if($pp->user->department->leader->ttd && $pp->status == 'acc2')
+                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $pp->user->department->leader->ttd))); ?>">
+                        @endif
+                    </td>
                 </tr>
 
                 <tr>
-                    <td>
-                        NAMA
+                    <td class="ttd-name">
+                        @if($pp->user)
+                        {{ $pp->user->name }}
+                        @endif
                     </td>
-                    <td>
-                        NAMA
+                    <td class="ttd-name">
+                        @if($pp->approval && ($pp->status == 'acc1' || $pp->status == 'acc-2' || $pp->status == 'acc2'))
+                        {{ $pp->approval->name }}
+                        @endif
                     </td>
-                    <td>NAMA</td>
+                    <td class="ttd-name">
+                        @if ($pp->user->department->leader && $pp->status == 'acc2')
+                        {{$pp->user->department->leader->name}}
+                        @endif
+                    </td>
                 </tr>
             </table>
 
