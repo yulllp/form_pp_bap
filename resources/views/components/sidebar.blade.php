@@ -54,7 +54,7 @@ $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty
                   </a>
                </li>
                <li>
-                  <a href="{{route('admin.departments')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="{{route('ongoing.bap')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-solid fa-file-contract"></i>
                      <span class="ml-3">Ongoing</span>
                   </a>
@@ -97,25 +97,25 @@ $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty
                   </a>
                </li>
                <li>
-                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="{{route('admin.brands')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-solid fa-copyright"></i>
                      <span class="ml-3">Brand</span>
                   </a>
                </li>
                <li>
-                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="{{route('admin.types')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-solid fa-bars"></i>
                      <span class="ml-3">Type</span>
                   </a>
                </li>
                <li>
-                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="{{route('admin.os')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-brands fa-windows"></i>
                      <span class="ml-3">Operating System</span>
                   </a>
                </li>
                <li>
-                  <a href="" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="{{route('admin.office')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-brands fa-microsoft"></i>
                      <span class="ml-3">Microsoft Office</span>
                   </a>

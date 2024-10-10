@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Kyslik\ColumnSortable\Sortable;
 use Ramsey\Uuid\Uuid;
 
 class BeritaAcara extends Model
 {
-    use HasFactory,HasUuids;
+    use HasFactory,HasUuids,Sortable;
     protected $table = 'berita_acara';
     protected $keyType = 'string'; // UUID is a string
     public $incrementing = false; // Disable auto-incrementing

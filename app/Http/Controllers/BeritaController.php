@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\BeritaAcara;
+use App\Models\Department;
 use App\Models\DetailBarang;
 use App\Models\Pembelian;
 use App\Models\Pengecekan;
+use App\Models\User;
+use Dompdf\Dompdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -134,9 +137,28 @@ class BeritaController extends Controller
         }
     }
 
+    public function onGoingIndex(){
+        $title = "On Going - BAP";
+        // $purchasing = User::with('department')->where('department.nama','purchasing')->get();
+        $beritas = BeritaAcara::with('detail_barang','penerima','pembuat','pembelian','pengecekan')->paginate(20);
+        $departments = Department::all();
 
+        return view('bap-ongoing',['title'=>$title, 'beritas'=>$beritas]);
+    }
 
-    public function print(){
+    public function printbap($id)
+    {
+        $bap = BeritaAcara::find($id);
+        $html = view('printbap', compact('bap'))->render();
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
 
+        $output = $dompdf->output();
+        $filePath = storage_path('app/public/bap.pdf');
+        file_put_contents($filePath, $output);
+
+        return $dompdf->stream($filePath, ['Attachment' => 0]);
     }
 }

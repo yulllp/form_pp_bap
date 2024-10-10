@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Kyslik\ColumnSortable\Sortable;
+use Illuminate\Database\Eloquent\Builder;
 use Ramsey\Uuid\Uuid;
 
 class OS extends Model
 {
-    use HasFactory,HasUuids;
+    use HasFactory,HasUuids,Sortable;
     protected $table = 'os';
     protected $keyType = 'string'; // UUID is a string
     public $incrementing = false; // Disable auto-incrementing
@@ -26,6 +28,16 @@ class OS extends Model
 
         static::creating(function ($model) {
             $model->id = Uuid::uuid4()->toString();
+        });
+    }
+
+    public $sortable = [
+        'status'
+    ];
+
+    public function scopeFilter(Builder $query, array $filters): void{
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            $query->where('name', 'like', '%' . $search . '%');
         });
     }
 

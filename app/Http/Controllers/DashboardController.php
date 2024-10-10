@@ -16,9 +16,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        $user = User::findOrFail(Auth::user()->id);
+        $department = $user->department->name;
         $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty($user->department_id) || empty($user->ttd);
-        return view('dashboard', ['title' => "Dashboard", 'isProfileIncomplete' => $isProfileIncomplete]);
+        return view('dashboard', ['title' => "Dashboard", 'isProfileIncomplete' => $isProfileIncomplete,'department'=>$department]);
     }
 
     public function showForm(){
@@ -32,12 +33,7 @@ class DashboardController extends Controller
         return view('bap', ['title' => $title, 'users' => $users, 'brands'=>$brands,'types'=>$types,'oss'=>$oss,'offices'=>$offices,'companies'=>$companies]);
     }
 
-    public function editIndex(Request $request){
+    public function editIndex(){
         
     }
-
-    // public function onGoingBAP(){
-    //     $title = "On Going - BAP";
-    //     $beritas = BeritaAcara::with('users')
-    // }
 }
