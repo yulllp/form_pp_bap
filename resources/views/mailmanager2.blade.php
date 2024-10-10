@@ -15,23 +15,23 @@
           <!-- Header -->
           <tr>
             <td class="header" style="background-color: #345C72; padding: 40px; text-align: center; color: white; font-size: 24px;">
-              Approval Email from IT PT IMLI
+              Approval Email from Manager PT IMLI
             </td>
           </tr>
 
           <!-- Body -->
           <tr>
             <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
-              Halo, {{$msg->user->name}}! <br>
-              @if($msg->status == 'acc1')
-              Pengajuan Permintaan Pembelian Internal anda di APPROVE oleh pihak IT ({{$msg->approval->name}} - IT), Pada tanggal {{$msg->it_confirm_date}}.
-              @elseif($msg->status == 'acc-1')
-              Pengajuan Permintaan Pembelian Internal anda di DISAPPROVE oleh pihak IT ({{$msg->approval->name}} - IT), Pada tanggal {{$msg->it_confirm_date}}.
+              Halo, {{$msg->approval->name}}! <br>
+              @if($msg->status == 'acc2')
+              Pengajuan Permintaan Pembelian Internal anda di APPROVE oleh Managaer ({{$msg->user->depatment->leader->name}} - Manager), Pada tanggal {{$msg->manager_confirm_date}}.
+              @elseif($msg->status == 'acc-2')
+              Pengajuan Permintaan Pembelian Internal anda di DISAPPROVE oleh Manager ({{$msg->user->depatment->leader->name}} - Manager), Pada tanggal {{$msg->manager_confirm_date}}.
               @endif
               <br><br>
-              @if($msg->status == 'acc1')
+              @if($msg->status == 'acc2')
               Silahkan klik tombol dibawah ini untuk melihat detail Permintaan Pembelian.
-              @elseif($msg->status == 'acc-1')
+              @elseif($msg->status == 'acc-2')
               Silahkan klik tombol dibawah ini untuk melakukan revisi Permintaan Pembelian.
               @endif
             </td>
@@ -44,9 +44,9 @@
               <table cellspacing="0" cellpadding="0" style="margin: auto;">
                 <tr>
                   <td style="background-color: #345C72; padding: 10px 20px; border-radius: 5px; text-align: center;">
-                    @if($msg->status == 'acc1')
+                    @if($msg->status == 'acc2')
                     <a href="http://127.0.0.1:8000/printpp/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat data yang diapprove</a>
-                    @elseif($msg->status == 'acc-1')
+                    @elseif($msg->status == 'acc-2')
                     <a href="http://127.0.0.1:8000/edit/permintaan/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Cek data yang perlu direvisi</a>
                     @endif
                   </td>

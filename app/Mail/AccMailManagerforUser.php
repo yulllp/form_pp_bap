@@ -10,12 +10,13 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
-class ApproveMailManager extends Mailable implements ShouldQueue
+class AccMailManagerforUser extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     public $msg;
     public $subject;
+
     /**
      * Create a new message instance.
      */
@@ -42,7 +43,7 @@ class ApproveMailManager extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mailmanager',
+            view: 'mailmanager3',
             with: ['msg' => $this->msg],
         );
     }

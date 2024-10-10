@@ -7,18 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
-class AccMail extends Mailable
+class ToMailManager extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
+    public $msg;
+    public $subject;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($msg, $subject)
     {
-        //
+        $this->msg = $msg;
+        $this->subject = $subject;
     }
 
     /**
@@ -27,7 +31,8 @@ class AccMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Acc Mail',
+            from: new Address('itsupport@imligroup.com', 'IT Support IMLI'),
+            subject: $this->subject,
         );
     }
 
@@ -37,7 +42,8 @@ class AccMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mailmanager',
+            with: ['msg' => $this->msg],
         );
     }
 

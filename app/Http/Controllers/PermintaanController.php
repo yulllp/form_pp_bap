@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AccMailManagerforIT;
+use App\Mail\AccMailManagerforUser;
 use App\Mail\ApproveMail;
 use App\Mail\ApproveMailIT;
+use App\Mail\ToMailManager;
 use App\Models\Barang;
 use App\Models\PermintaanPembelian;
 use Dompdf\Dompdf;
@@ -61,12 +64,18 @@ class PermintaanController extends Controller
             $pp->nomor = $nomor;
             $pp->save();
 
-            $to = "itsupport@imligroup.com";
+            $users = User::whereHas('department', function ($query) {
+                $query->where('name', 'IT')
+                      ->whereColumn('pemimpin_id', '!=', 'users.id'); // Exclude manager
+            })->get();
+
             $msg = $pp;
             $subject = "Pengajuan Permintaan Pembelian Internal - IT";
 
-            Mail::to($to)->send(new ApproveMail($msg, $subject));
-
+            foreach ($users as $user) {
+                $to = $user->email;
+                Mail::to($to)->send(new ApproveMail($msg, $subject));
+            }
 
             return redirect()->route('permintaan')->with('success', 'Permintaan pembelian created successfully.');
         } catch (\Exception $e) {
@@ -79,7 +88,7 @@ class PermintaanController extends Controller
     {
         $pt_tujuan = PtTujuan::all();
         $dataPP = PermintaanPembelian::with(['user', 'barang', 'pt_tujuan'])->findOrFail($id);
-        $barangData = Barang::where('pp_id', $id)->get();
+        $barangData = Barang::where('pp_id', $id)->orderBy('id', 'asc')->get();
         return view('edit', ['data' => $dataPP, 'title' => 'Approval permintaan', 'pts' => $pt_tujuan, 'barangData' => $barangData]);
     }
 
@@ -177,11 +186,16 @@ class PermintaanController extends Controller
                     $dataPP->approval_id = Auth::user()->id;
                     $dataPP->save();
 
-                    $to = "itsupport@imligroup.com";
+                    $to = $dataPP->user->email;
                     $msg = $dataPP;
                     $subject = "Pengajuan Permintaan Pembelian Internal - IT";
 
                     Mail::to($to)->send(new ApproveMailIT($msg, $subject));
+
+                    $to = $dataPP->user->department->leader->email;
+                    $msg = $dataPP;
+                    $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+                    Mail::to($to)->send(new ToMailManager($msg, $subject));
 
                     return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian diapprove!');
                 } elseif ($validated['status'] == 'disapprove') {
@@ -195,7 +209,7 @@ class PermintaanController extends Controller
                     $dataPP->approval_id = Auth::user()->id;
                     $dataPP->save();
 
-                    $to = "itsupport@imligroup.com";
+                    $to = $dataPP->user->email;
                     $msg = $dataPP;
                     $subject = "Pengajuan Permintaan Pembelian Internal - IT";
 
@@ -219,6 +233,19 @@ class PermintaanController extends Controller
                 $dataPP->manager_confirm_date = Carbon::now();
                 $dataPP->revision_it = null;
                 $dataPP->save();
+
+                $to = $dataPP->approval->email;
+                $msg = $dataPP;
+                $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+                Mail::to($to)->send(new AccMailManagerforIT($msg, $subject));
+
+                $to = $dataPP->user->email;
+                $msg = $dataPP;
+                $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+                Mail::to($to)->send(new AccMailManagerforUser($msg, $subject));
+
                 return redirect()->route('history', $id)->with('success', 'Permintaan pembelian diapprove!');
             } elseif ($validated['status'] == 'disapprove') {
                 $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
@@ -229,6 +256,19 @@ class PermintaanController extends Controller
                 ]);
                 $dataPP->revision_it = $revisi['revisi'];
                 $dataPP->save();
+
+                $to = $dataPP->approval->email;
+                $msg = $dataPP;
+                $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+                Mail::to($to)->send(new AccMailManagerforIT($msg, $subject));
+
+                $to = $dataPP->user->email;
+                $msg = $dataPP;
+                $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+                Mail::to($to)->send(new AccMailManagerforUser($msg, $subject));
+                
                 return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian disapprove!');
             }
         }
