@@ -19,7 +19,7 @@ use function Laravel\Prompts\search;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable,HasUuids,Sortable;
+    use HasFactory, Notifiable, HasUuids, Sortable;
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -41,6 +41,11 @@ class User extends Authenticatable
         'ttd',
         'status'
     ];
+
+    public function getIsAdminAttribute()
+    {
+        return $this->role === 'admin';
+    }
 
     public $sortable = [
         'status'
@@ -97,7 +102,8 @@ class User extends Authenticatable
         return $this->hasMany(Department::class, 'pemimpin_id');
     }
 
-    public function scopeFilter(Builder $query, array $filters): void{
+    public function scopeFilter(Builder $query, array $filters): void
+    {
         $query->when($filters['search'] ?? false, function ($query, $search) {
             $query->where('name', 'like', '%' . $search . '%');
         });

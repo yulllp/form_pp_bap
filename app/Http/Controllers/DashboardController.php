@@ -6,6 +6,7 @@ use App\Models\BeritaAcara;
 use App\Models\Brand;
 use App\Models\Office;
 use App\Models\OS;
+use App\Models\PermintaanPembelian;
 use App\Models\PtTujuan;
 use App\Models\Type;
 use App\Models\User;
@@ -17,9 +18,11 @@ class DashboardController extends Controller
     public function index()
     {
         $user = User::findOrFail(Auth::user()->id);
-        $department = $user->department->nama;
+        // $department = $user->department->nama;
         $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty($user->department_id) || empty($user->ttd);
-        return view('dashboard', ['title' => "Dashboard", 'isProfileIncomplete' => $isProfileIncomplete,'department'=>$department]);
+        $pp = PermintaanPembelian::count();
+        $bap = BeritaAcara::count();
+        return view('dashboard', ['title' => "Dashboard", 'isProfileIncomplete' => $isProfileIncomplete, 'pp' => $pp, 'bap'=>$bap]);
     }
 
     public function showForm(){
