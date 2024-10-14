@@ -29,7 +29,8 @@ class BeritaAcara extends Model
         'approved_date',
         'status',
         'ttd_pengecekan_id',
-        'pengecekan_date'
+        'pengecekan_date',
+        'spesifikasi'
     ];
 
     protected static function boot()
@@ -49,6 +50,10 @@ class BeritaAcara extends Model
     {
         return $this->belongsTo(User::class, 'penerima_id');
     }
+    public function purchasing(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'ttd_purchasing_id');
+    }
     public function detail_barang(): BelongsTo
     {
         return $this->belongsTo(DetailBarang::class, 'detail_barang_id');
@@ -59,6 +64,6 @@ class BeritaAcara extends Model
     }
     public function pengecekan(): BelongsTo
     {
-        return $this->belongsTo(Pembelian::class, 'pengecekan_id');
+        return $this->belongsTo(Pengecekan::class, 'pengecekan_id');
     }
 }

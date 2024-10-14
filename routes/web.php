@@ -85,5 +85,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/create/berita', [BeritaController::class, 'store'])->name('store.bap');
     Route::get('/edit/berita/{id}', [DashboardController::class, 'showEditForm'])->name('editform.bap');
     Route::get('/printbap/{id}',[BeritaController::class,'printbap'])->name('printbap');
-
+    Route::get('/bap/edit/{id}',[BeritaController::class,'editIndex'])->name('bap.editIndex');
+    Route::put('/bap/edit/{id}',[BeritaController::class,'update'])->name('update.bap');
+    Route::get('/bap/approve/{id}',[BeritaController::class,'approveIndex'])->name('approveIndex.bap');
+    Route::put('/bap/approve/{id}',[BeritaController::class,'approve'])->name('bap.approve');
+    Route::put('/bap/reject/{id}',[BeritaController::class,'reject'])->name('bap.reject');
+    Route::get('/bap/history',[BeritaController::class,'historyIndex'])->name('history.bap');
 });
