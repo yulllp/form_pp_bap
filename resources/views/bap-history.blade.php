@@ -2,53 +2,6 @@
     @section('title', 'On Going - BAP')
     <x-slot:title>{{$title}} </x-slot:title>
     <section class="bg-white dark:bg-gray-900 w-full relative px-4 py-4 sm:px-6">
-        @if ($errors->any())
-        <div id="error-alert" class="relative flex w-full items-center p-4 mb-4 text-red-800 border border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800 rounded-md shadow-sm" role="alert">
-            <div id="error-progress-bar" class="absolute top-0 left-0 h-1 bg-red-500 rounded-t-md" style="width: 100%; transition: width 5s linear;"></div>
-
-            <svg class="flex-shrink-0 w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-
-            <div class="ml-3 text-sm font-medium">
-                Please fix the following errors:
-                <ul class="mt-1">
-                    @foreach ($errors->all() as $error)
-                    <li>- {{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-
-            <button type="button" id="close-error-alert" class="absolute top-2 right-2 bg-red-50 text-red-500 rounded-lg p-1.5 hover:bg-red-200 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" aria-label="Close">
-                <span class="sr-only">Close</span>
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-            </button>
-        </div>
-        @endif
-
-        <!-- Success Alert -->
-        @if (session('success'))
-        <div id="success-alert" class="relative flex w-full items-center p-4 mb-4 text-green-800 border border-green-300 bg-green-50 dark:text-green-400 dark:bg-gray-800 dark:border-green-800 rounded-md shadow-sm" role="alert">
-            <div id="progress-bar" class="absolute top-0 left-0 h-1 bg-green-500 rounded-t-md" style="width: 100%; transition: width 5s linear;"></div>
-
-            <svg class="flex-shrink-0 w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-
-            <div class="ml-3 text-sm font-medium">
-                {{ session('success') }}
-            </div>
-
-            <button type="button" id="close-alert" class="absolute top-2 right-2 bg-green-50 text-green-500 rounded-lg p-1.5 hover:bg-green-200 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" aria-label="Close">
-                <span class="sr-only">Close</span>
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-            </button>
-        </div>
-        @endif
         <div class="overflow-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -106,39 +59,6 @@
                                     Details
                                 </button>
                             </a>
-                            @if ($berita->status === 'acc0' && $berita->pembuat_id === Auth::id())
-                            <a href="{{route('bap.editIndex',['id' => $berita->id])}}">
-                                <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                                    Edit
-                                </button>
-                            </a>
-                            @endif
-                            @if (($berita->status === 'acc-1' || $berita->status === 'acc-2' || $berita->status === 'acc-3' ) && $berita->pembuat_id === Auth::id())
-                            <a href="{{route('bap.editIndex',['id' => $berita->id])}}">
-                                <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                                    Edit
-                                </button>
-                            </a>
-                            @endif
-                            @if ($berita->status === 'acc0' && Auth::user()->department->nama === 'purchasing')
-                            <a href="{{route('approveIndex.bap',['id' => $berita->id])}}">
-                                <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                                    Approve
-                                </button>
-                            </a>
-                            @elseif ($berita->status === 'acc1' && Auth::id() === $berita->penerima_id )
-                            <a href="{{route('approveIndex.bap',['id' => $berita->id])}}">
-                                <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                                    Approve
-                                </button>
-                            </a>
-                            @elseif ($berita->status === 'acc2' && Auth::id() === $berita->penerima->department->leader->id )
-                            <a href="{{route('approveIndex.bap',['id' => $berita->id])}}">
-                                <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                                    Approve
-                                </button>
-                            </a>
-                            @endif
                         </td>
                     </tr>
                 </tbody>
@@ -213,63 +133,6 @@
 </x-layout>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // For the error alert
-        const errorAlertBox = document.getElementById('error-alert');
-        const errorCloseButton = document.getElementById('close-error-alert');
-        const errorProgressBar = document.getElementById('error-progress-bar');
-
-        if (errorAlertBox) {
-            errorProgressBar.style.transition = 'none';
-            errorProgressBar.style.width = '100%'; // Start full
-
-            setTimeout(() => {
-                errorProgressBar.style.transition = 'width 5s linear';
-                errorProgressBar.style.width = '0'; // Shrink to 0 over 5 seconds
-
-                // Hide the alert after the progress bar animation completes
-                setTimeout(() => {
-                    errorAlertBox.classList.add('hidden');
-                }, 5000); // Matches the duration of the animation (5s)
-            }, 100); // Small delay to make sure DOM is ready for transition
-        }
-
-        // Close the error alert manually when the close button is clicked
-        if (errorCloseButton) {
-            errorCloseButton.addEventListener('click', function() {
-                errorAlertBox.classList.add('hidden');
-            });
-        }
-
-        const alertBox = document.getElementById('success-alert');
-        const closeButton = document.getElementById('close-alert');
-        const progressBar = document.getElementById('progress-bar');
-
-        function showAlert() {
-            alertBox.classList.remove('hidden');
-            progressBar.style.transition = 'none'; // Disable transition to reset
-            progressBar.style.width = '100%'; // Start full
-
-            // Delay to let the browser process width change, then start animation
-            setTimeout(() => {
-                progressBar.style.transition = 'width 5s linear'; // Enable transition
-                progressBar.style.width = '0'; // Shrink to 0 over 5 seconds
-            }, 100); // Short delay to allow DOM update
-
-            // Automatically hide the alert after 5 seconds
-            setTimeout(() => {
-                alertBox.classList.add('hidden');
-            }, 5100); // Delay slightly longer than the transition
-        }
-
-        // Close the alert when the close button is clicked
-        closeButton.addEventListener('click', () => {
-            alertBox.classList.add('hidden');
-        });
-
-        showAlert();
-
-    });
     document.querySelectorAll('button[data-modal-target="timeline-modal"]').forEach(button => {
         button.addEventListener('click', function() {
             const status = this.getAttribute('data-status');
@@ -317,7 +180,8 @@
                 setStepInProgress1(0, 'Terdapat kesalahan pada data BAP', 'Menunggu revisi data BAP');
                 displayRedCross(3, 'Permintaan ditolak oleh Manager', `Data ditolak pada ${manager_confirm_date}. Silahkan menghubungi pihak Manager`)
                 setStepComplete(1, 'Konfirmasi dari Pihak Purchasing selesai', `Data dikonfirm pada ${purchasing_confirm_date}`);
-                setStepComplete(2, 'Konfirmasi dari Pihak User selesai', `Data dikonfirm pada ${user_confirm_date}`);            }
+                setStepComplete(2, 'Konfirmasi dari Pihak User selesai', `Data dikonfirm pada ${user_confirm_date}`);
+            }
         });
     });
 

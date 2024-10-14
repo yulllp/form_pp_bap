@@ -82,6 +82,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(PermintaanPembelian::class, 'user_id');
     }
+    public function purchasing(): HasMany
+    {
+        return $this->hasMany(User::class, 'ttd_purchasing_id');
+    }
 
     public function department(): BelongsTo
     {

@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print BAP</title>
     <style>
-        body{
+        body {
             font-family: Calibri, sans-serif;
             margin: 0;
             font-size: 8.5;
             /* font-size: 12; */
         }
+
         .container {
             width: 750px;
             height: 100%;
@@ -58,6 +59,16 @@
         .header-table th {
             text-align: center;
         }
+
+        img {
+            height: 100px;
+            width: 100px;
+        }
+
+        .ttd {
+            height: 50px;
+            width: 50px;
+        }
     </style>
 </head>
 
@@ -81,50 +92,50 @@
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Recipient's Name:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->penerima->name}}</td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Department:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->penerima->department->nama}}</td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Date of submission:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{ $bap->created_at->format('d M Y') }}</td>
                 </tr>
                 <tr>
                     <td colspan="100%" style="font-weight: bold;">Detail Barang</td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Brand:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->brand->name}}</td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Type:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->type->name}}</td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Spesifikasi:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->spesifikasi}}</td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Serial Number:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->serial_number}}</< /td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">PC Name:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->pc_name}}</< /td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Password:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->password}}</< /td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Operational System:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->os->name}}</< /td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Office:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->office->name}}</< /td>
                 </tr>
                 <tr>
                     <td colspan="25%" rowspan="3" style="text-align: left;">Program Default:</td>
@@ -146,44 +157,41 @@
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Other:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->detail_barang->other}}</< /td>
                 </tr>
                 <tr>
                     <td colspan="100%" style="font-weight: bold;">Pembelian</td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Company:</td>
-                    <td colspan="75%" style="text-align: left;"></td>
+                    <td colspan="75%" style="text-align: left;">{{$bap->pembelian->company->name}}</< /td>
                 </tr>
                 <tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Request Number (PP):</td>
-                    <td colspan="38%" style="text-align: left;">
-                    </td>
+                    <td colspan="38%" style="text-align: left;">{{$bap->pembelian->pp}}</td>
                     <td colspan="7%" style="text-align: left;">
                         Date:
                     </td>
-                    <td colspan="30%" style="text-align: left;">
+                    <td colspan="30%" style="text-align: left;"> {{ \Carbon\Carbon::parse($bap->pembelian->pp_date)->format('d M Y') }}
                     </td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Purchase Number (PO):</td>
-                    <td colspan="38%" style="text-align: left;">
-                    </td>
+                    <td colspan="38%" style="text-align: left;">{{$bap->pembelian->po}}</td>
                     <td colspan="7%" style="text-align: left;">
                         Date:
                     </td>
-                    <td colspan="30%" style="text-align: left;">
+                    <td colspan="30%" style="text-align: left;"> {{ \Carbon\Carbon::parse($bap->pembelian->po_date)->format('d M Y') }}
                     </td>
                 </tr>
                 <tr>
                     <td colspan="25%" style="text-align: left;">Receipt Note Number (SJ):</td>
-                    <td colspan="38%" style="text-align: left;">
-                    </td>
+                    <td colspan="38%" style="text-align: left;">{{$bap->pembelian->sj}}</td>
                     <td colspan="7%" style="text-align: left;">
                         Date:
                     </td>
-                    <td colspan="30%" style="text-align: left;">
+                    <td colspan="30%" style="text-align: left;"> {{ \Carbon\Carbon::parse($bap->pembelian->sj_date)->format('d M Y') }}
                     </td>
                 </tr>
                 <tr>
@@ -193,6 +201,7 @@
                     <td colspan="25%" style="text-align: left;">Kode IT
                     </td>
                     <td colspan="75%" style="text-align: left;">
+                        {{$bap->nomor}}
                     </td>
                 </tr>
                 <tr>
@@ -200,7 +209,7 @@
                         Checker
                     </td>
                     <td colspan="75%" style="text-align: left;">
-
+                        {{$bap->pengecekan->checker}}
                     </td>
                 </tr>
                 <tr>
@@ -208,7 +217,7 @@
                         Checking Date
                     </td>
                     <td colspan="75%" style="text-align: left;">
-
+                        {{ \Carbon\Carbon::parse($bap->pengecekan->checking_date)->format('d M Y') }}
                     </td>
                 </tr>
                 <tr>
@@ -216,10 +225,14 @@
                         Photo
                     </td>
                     <td colspan="38%" style="height: 100px;">
-
+                        @if ($bap->pengecekan->foto1)
+                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pengecekan->foto1))); ?>">
+                        @endif
                     </td>
                     <td colspan="37%" style="height: 100px;">
-
+                        @if ($bap->pengecekan->foto2)
+                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pengecekan->foto2))); ?>">
+                        @endif
                     </td>
                 </tr>
                 <tr>
@@ -248,8 +261,9 @@
                     </td>
                 </tr>
                 <tr>
+                    @if ($bap->status === 'acc0')
                     <td colspan="25%" style="height: 50px;">
-
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pembuat->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
 
@@ -260,34 +274,158 @@
                     <td colspan="25%" style="height: 50px;">
 
                     </td>
+                    @elseif ($bap->status === 'acc1' || $bap->status === 'acc-2')
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pembuat->ttd))); ?>">
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->purchasing->ttd))); ?>">
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+
+                    </td>
+                    @elseif ($bap->status === 'acc2' || $bap->status === 'acc-3')
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pembuat->ttd))); ?>">
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->purchasing->ttd))); ?>">
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->penerima->ttd))); ?>">
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+
+                    </td>
+                    @elseif ($bap->status === 'acc3')
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pembuat->ttd))); ?>">
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->purchasing->ttd))); ?>">
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->penerima->ttd))); ?>">
+                    </td>
+                    <td colspan="25%" style="height: 50px;">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->penerima->department->leader->ttd))); ?>">
+                    </td>
+                    @endif
                 </tr>
                 <tr>
+                    @if ($bap->status === 'acc0')
                     <td colspan="25%" style="text-align: left; font-weight: bold;">
-                        Nama
+                        Nama: {{$bap->pembuat->name}}
                     </td>
                     <td colspan="25%" style="text-align: left; font-weight: bold;">
-                        Nama
+                        Nama:
                     </td>
                     <td colspan="25%" style="text-align: left; font-weight: bold;">
-                        Nama
+                        Nama:
                     </td>
                     <td colspan="25%" style="text-align: left; font-weight: bold;">
-                        Nama
+                        Nama:
                     </td>
+                    @elseif ($bap->status === 'acc1' || $bap->status === 'acc-2')
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->pembuat->name}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->purchasing->name}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama:
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama:
+                    </td>
+                    @elseif ($bap->status === 'acc2' || $bap->status === 'acc-3')
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->pembuat->name}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->purchasing->name}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->penerima->name}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama:
+                    </td>
+                    @elseif ($bap->status === 'acc3')
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->pembuat->name}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->purchasing->name}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->penerima->name}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Nama: {{$bap->penerima->department->leader->name}}
+                    </td>
+                    @endif
                 </tr>
                 <tr>
+                    @if ($bap->status === 'acc0')
                     <td colspan="25%" style="text-align: left; font-weight: bold;">
-                        Tanggal
+                        Tanggal: {{$bap->created_at->format('d M Y')}}
                     </td>
                     <td colspan="25%" style="text-align: left; font-weight: bold;">
-                        Tanggal
+                        Tanggal:
                     </td>
                     <td colspan="25%" style="text-align: left; font-weight: bold;">
-                        Tanggal
+                        Tanggal:
                     </td>
                     <td colspan="25%" style="text-align: left; font-weight: bold;">
-                        Tanggal
+                        Tanggal:
                     </td>
+                    @elseif ($bap->status === 'acc1' || $bap->status === 'acc-2')
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{$bap->created_at->format('d M Y')}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{ \Carbon\Carbon::parse($bap->purchasing_date)->format('d M Y') }}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal:
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal:
+                    </td>
+                    @elseif($bap->status === 'acc2' || $bap->status === 'acc-3')
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{$bap->created_at->format('d M Y')}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{ \Carbon\Carbon::parse($bap->purchasing_date)->format('d M Y') }}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{ \Carbon\Carbon::parse($bap->using_date)->format('d M Y') }}
+                    </td>
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal:
+                    </td>
+                    @elseif($bap->status === 'acc3')
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{$bap->created_at->format('d M Y')}}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{ \Carbon\Carbon::parse($bap->purchasing_date)->format('d M Y') }}
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{ \Carbon\Carbon::parse($bap->using_date)->format('d M Y') }}
+                    </td>
+                    </td>
+                    <td colspan="25%" style="text-align: left; font-weight: bold;">
+                        Tanggal: {{ \Carbon\Carbon::parse($bap->approved_date)->format('d M Y') }}
+                    </td>
+                    @endif
                 </tr>
             </table>
         </div>

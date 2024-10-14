@@ -48,10 +48,12 @@ $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty
             <!-- Dropdown Menu -->
             <ul id="dropdown-bap" class="hidden py-2 space-y-2">
                <li>
+                  @if (Auth::user()->department->nama === 'IT')
                   <a href="{{route('form.bap')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-solid fa-pencil"></i>
                      <span class="ml-3">Create</span>
                   </a>
+                  @endif
                </li>
                <li>
                   <a href="{{route('ongoing.bap')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -60,7 +62,7 @@ $isProfileIncomplete = empty($user->email) || empty($user->tahun_masuk) || empty
                   </a>
                </li>
                <li>
-                  <a href="{{route('admin.companies')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="{{route('history.bap')}}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                      <i class="fa-solid fa-clock-rotate-left"></i>
                      <span class="ml-3">History</span>
                   </a>
