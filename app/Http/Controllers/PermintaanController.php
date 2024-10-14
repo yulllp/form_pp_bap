@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class PermintaanController extends Controller
 {
@@ -66,7 +68,7 @@ class PermintaanController extends Controller
 
             $users = User::whereHas('department', function ($query) {
                 $query->where('name', 'IT')
-                      ->whereColumn('pemimpin_id', '!=', 'users.id'); // Exclude manager
+                    ->whereColumn('pemimpin_id', '!=', 'users.id'); // Exclude manager
             })->get();
 
             $msg = $pp;
@@ -127,6 +129,30 @@ class PermintaanController extends Controller
 
                 $dataArray = json_decode($validated['dataArray'], true);
 
+                if (!is_array($dataArray) || count($dataArray) < 1) {
+                    throw ValidationException::withMessages(['dataArray' => ['The data must contain at least one item.']]);
+                }
+
+                foreach ($dataArray as $index => $data) {
+                    // Validate each item in the dataArray
+                    $validator = Validator::make($data, [
+                        'id' => 'required|uuid',
+                        'nama' => 'required|string',
+                        'jumlah' => 'required|numeric',
+                        'satuan' => 'required|string',
+                        'tanggal_diperlukan' => 'required|date_format:d-m-Y',
+                        'keterangan_it' => 'required|string',
+                    ]);
+
+                    if ($validator->fails()) {
+                        // Handle validation errors for this specific item
+                        throw ValidationException::withMessages([$index => $validator->errors()->all()]);
+                    }
+
+                    // If validation passes, you can store the validated item
+                    $validatedData[] = $data;
+                }
+
                 // Retrieve existing barang records related to the given pp_id
                 $existingBarangs = Barang::with('permintaan_pembelian')->where('pp_id', $id)->get();
 
@@ -136,7 +162,7 @@ class PermintaanController extends Controller
                 $updatedIds = [];
 
                 // Iterate over the provided data array to update or create records
-                foreach ($dataArray as $data) {
+                foreach ($validatedData as $data) {
                     $barangId = $data['id'] ?? '';
                     $tanggalDiperlukan = \DateTime::createFromFormat('d-m-Y', $data['tanggal_diperlukan'])->format('Y-m-d');
 
@@ -203,7 +229,7 @@ class PermintaanController extends Controller
                     $dataPP->status = 'acc-1';
                     $dataPP->it_confirm_date = Carbon::now();
                     $revisi = $request->validate([
-                        'revisi' => 'nullable|string'
+                        'revisi' => 'required|string'
                     ]);
                     $dataPP->revision_user = $revisi['revisi'];
                     $dataPP->approval_id = Auth::user()->id;
@@ -219,8 +245,7 @@ class PermintaanController extends Controller
 
                 return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian berhasil tersimpan.');
             } catch (\Exception $e) {
-                dd($e->getMessage());
-                return back()->withErrors(['error' => 'Validation error: ' . $e->getMessage()]);
+                return back()->withErrors(['error' => $e->getMessage()]);
             }
         } elseif (Auth::user()->name == Auth::user()->department->leader->name) {
             $validated = $request->validate([
@@ -252,7 +277,7 @@ class PermintaanController extends Controller
                 $dataPP->status = 'acc-2';
                 $dataPP->manager_confirm_date = Carbon::now();
                 $revisi = $request->validate([
-                    'revisi' => 'nullable|string'
+                    'revisi' => 'required|string'
                 ]);
                 $dataPP->revision_it = $revisi['revisi'];
                 $dataPP->save();
@@ -268,7 +293,7 @@ class PermintaanController extends Controller
                 $subject = "Pengajuan Permintaan Pembelian Internal - IT";
 
                 Mail::to($to)->send(new AccMailManagerforUser($msg, $subject));
-                
+
                 return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian disapprove!');
             }
         }

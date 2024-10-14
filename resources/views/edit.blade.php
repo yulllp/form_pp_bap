@@ -28,6 +28,23 @@
       </div>
       @endif
 
+      @if ($errors->any())
+      <div id="alert" class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800" role="alert">
+        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <div class="ms-3 text-sm font-medium">
+          {{ $errors->first() }}
+        </div>
+        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" data-dismiss-target="alert" aria-label="Close">
+          <span class="sr-only">Dismiss</span>
+          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+          </svg>
+        </button>
+      </div>
+      @endif
+
       <div id="alert-border-4" class="hidden items-center p-4 mb-4 text-yellow-800 border-t-4 border-yellow-300 bg-yellow-50 dark:text-yellow-300 dark:bg-gray-800 dark:border-yellow-800" role="alert">
         <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
@@ -311,6 +328,7 @@
       const rawData = JSON.parse(document.getElementById('barangData').value);
 
       dataArray = rawData.map(item => ({
+        id: item.id,
         nama: item.nama,
         jumlah: item.jumlah,
         satuan: item.satuan,
@@ -419,12 +437,8 @@
         });
 
         setTimeout(() => {
-          alertDiv2.classList.add('opacity-0'); // Start fading out
-          alertDiv2.classList.remove('opacity-100'); // Start fading out
-          setTimeout(() => {
-            alertDiv2.classList.remove('flex'); // Remove flex class
-            alertDiv2.classList.add('hidden'); // Hide alert after fading
-          }, 500); // Wait for fade-out to complete before hiding
+          alertDiv2.classList.remove('flex'); // Remove flex class
+          alertDiv2.classList.add('hidden');
         }, 5000);
 
         e.preventDefault();
@@ -433,7 +447,8 @@
 
       // Update the data array at the current edit index
       dataArray[currentEditIndex] = {
-        nama: spec,
+        id: dataArray[currentEditIndex].id,
+        nama: spec, 
         jumlah: jumlah,
         satuan: satuan,
         tanggal_diperlukan: tanggal,
@@ -451,6 +466,22 @@
       count = count - 1;
       renderTable();
       updateHiddenInput();
+    }
+
+    function checkTable() {
+      alertDiv.classList.remove('hidden');
+      alertDiv.classList.add('flex');
+      alertDiv.classList.add('opacity-100');
+      alertText.textContent = 'Data table can not be empty';
+      alertDiv.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+      setTimeout(() => {
+        alertDiv.classList.remove('flex');
+        alertDiv.classList.add('hidden');
+      }, 5000);
     }
 
     // Add click event to the "Add" button
@@ -488,12 +519,8 @@
         });
 
         setTimeout(() => {
-          alertDiv.classList.add('opacity-0'); // Start fading out
-          alertDiv.classList.remove('opacity-100'); // Start fading out
-          setTimeout(() => {
-            alertDiv.classList.remove('flex'); // Remove flex class
-            alertDiv.classList.add('hidden'); // Hide alert after fading
-          }, 500); // Wait for fade-out to complete before hiding
+          alertDiv.classList.remove('flex'); // Remove flex class
+          alertDiv.classList.add('hidden'); // Hide alert after fading
         }, 5000);
 
         return; // Stop the function from proceeding
@@ -510,12 +537,8 @@
         });
 
         setTimeout(() => {
-          alertDiv.classList.add('opacity-0'); // Start fading out
-          alertDiv.classList.remove('opacity-100'); // Start fading out
-          setTimeout(() => {
-            alertDiv.classList.remove('flex'); // Remove flex class
-            alertDiv.classList.add('hidden'); // Hide alert after fading
-          }, 500); // Wait for fade-out to complete before hiding
+          alertDiv.classList.remove('flex'); // Remove flex class
+          alertDiv.classList.add('hidden');
         }, 5000);
 
         return;
@@ -562,11 +585,10 @@
     }
 
     if (simpanBtn) {
-      document.getElementById('simpanBtn').addEventListener('click', function() {
+      document.getElementById('simpanBtn').addEventListener('click', function(event) {
         if (user == 'IT' || ('{{ Auth::user()->department->nama }}' != 'IT' || '{{ Auth::user()->name }}' != '{{ Auth::user()->department->leader->name }}')) {
           statusInput.value = 'simpan';
           modalMessage.innerText = 'Are you sure you want to save this data?';
-
           // Hide the textarea and remove the required attribute
           revisi.classList.add('hidden');
         }

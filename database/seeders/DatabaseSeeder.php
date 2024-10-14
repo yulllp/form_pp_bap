@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
             // DepartmentSeeder::class,
             // UserSeeder::class,
             // PtTujuanSeeder::class
-            // BrandSeeder::class,
+            BrandSeeder::class,
             TypeSeeder::class,
-            // OSSeeder::class,
-            // OfficeSeeder::class
+            OSSeeder::class,
+            OfficeSeeder::class
         ]);
     }
 }
