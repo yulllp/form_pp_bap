@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Mail;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class BeritaController extends Controller
 {
@@ -489,7 +490,8 @@ class BeritaController extends Controller
     public function printbap($id)
     {
         $bap = BeritaAcara::with('penerima', 'pembuat', 'detail_barang', 'pembelian', 'pengecekan')->find($id);
-        $html = view('printbap', compact('bap'))->render();
+        $qr = QrCode::size(200)->generate($bap->nomor);
+        $html = view('printbap', compact('bap', 'qr'))->render();
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');

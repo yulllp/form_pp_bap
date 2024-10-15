@@ -69,6 +69,36 @@
             height: 50px;
             width: 50px;
         }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        .align-center {
+            text-align: center;
+        }
+
+        .qrContainer {
+            transform-origin: top left;
+            height: 133px;
+            width: 350px;
+            font-size: 10;
+            box-sizing: border-box;
+            padding: 50px;
+            position: relative;
+        }
+
+        .qrimg {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+
+        }
+
+        .no-space {
+            padding: 0px;
+            margin: 0px;
+        }
     </style>
 </head>
 
@@ -430,6 +460,36 @@
             </table>
         </div>
     </div>
+
+    <div>
+        <div class="page-break"></div>
+    </div>
+
+    <div class="page">
+        <div class="qrContainer">
+            <table>
+                <tr>
+                    <td colspan="2" style="width: 45%;"><strong>Aset of IT MMNR Groups</strong></td>
+                    <td rowspan="3" style="width: 55%;" class="align-center no-space">
+                        <img class="qrimg" src="data:image/png;base64, {!! base64_encode($qr) !!}" style="max-width: 80px; max-height: 80px;"> <!-- Reduced image size -->
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">{{ $bap->pembelian->company->name }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 50%;">{{ \Carbon\Carbon::parse($bap->tanggal_dibuat)->format('d M Y') }}</td>
+                    <td style="width: 50%;">{{ $bap->detail_barang->pc_name }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="align-center"><strong>Do Not Remove</strong></td>
+                    <td class="align-center"><strong>{{ $bap->nomor }}</strong></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
 </body>
 
 </html>
