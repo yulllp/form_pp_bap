@@ -40,6 +40,12 @@ class BeritaAcara extends Model
         static::creating(function ($model) {
             $model->id = Uuid::uuid4()->toString();
         });
+        static::deleting(function ($beritaAcara) {
+            // Delete related records
+            $beritaAcara->detail_barang()->delete();
+            $beritaAcara->pembelian()->delete();
+            $beritaAcara->pengecekan()->delete();
+        });
     }
 
     public function pembuat(): BelongsTo
