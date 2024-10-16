@@ -173,6 +173,9 @@ class BeritaController extends Controller
     public function editIndex($id)
     {
         $berita = BeritaAcara::with('penerima', 'pembuat', 'detail_barang', 'pembelian', 'pengecekan')->findOrFail($id);
+        if (Auth::id() !== $berita->pembuat->id) {
+            return to_route('dashboard');
+        }
         $title = 'Edit - Berita Acara Pengakuan';
         $users = User::with('department')->orderBy('name')->get();
         $brands = Brand::orderBy('name')->get();
@@ -397,6 +400,20 @@ class BeritaController extends Controller
     public function approveIndex($id)
     {
         $berita = BeritaAcara::with('penerima', 'pembuat', 'detail_barang', 'pembelian', 'pengecekan')->find($id);
+        if ($berita->status === 'acc0') {
+            if (Auth::user()->department && Auth::user()->department->nama === 'purchasing') {
+                $title = 'Approval BAP';
+                return view('bap-approve', ['berita' => $berita, 'title' => $title]);
+            } else {
+                return to_route('dashboard');
+            }
+        } elseif ($berita->status === 'acc1' && Auth::id() !== $berita->penerima->id) {
+            return to_route('dashboard');
+        } elseif ($berita->status === 'acc2' && Auth::id() !== $berita->penerima->department->leader->id) {
+            return to_route('dashboard');
+        } elseif ($berita->status === 'acc3') {
+            return to_route('dashboard');
+        }
         $title = 'Approval BAP';
 
         return view('bap-approve', ['berita' => $berita, 'title' => $title]);
