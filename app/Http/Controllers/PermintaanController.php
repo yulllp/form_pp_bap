@@ -106,7 +106,7 @@ class PermintaanController extends Controller
             return to_route('dashboard');
         }
 
-        if ($dataPP->user->department_id != Auth::user()->department->leader->id && Auth::user()->id == Auth::user()->department->leader->id) {
+        if ($dataPP->user->department_id != Auth::user()->department->leader->department_id && Auth::user()->id == Auth::user()->department->leader->id) {
             return to_route('dashboard');
         }
 
