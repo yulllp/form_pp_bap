@@ -15,14 +15,14 @@ return new class extends Migration
             $table->string('nomor');
             $table->string('pembuat_id');
             $table->string('penerima_id');
-            $table->date('tanggal_dibuat');
+            $table->timestamp('tanggal_dibuat');
             $table->string('detail_barang_id');
             $table->string('pembelian_id');
             $table->string('pengecekan_id');
             $table->string('ttd_purchasing_id')->nullable();
-            $table->date('purchasing_date')->nullable();
-            $table->date('using_date')->nullable();
-            $table->date('approved_date')->nullable();
+            $table->timestamp('purchasing_date')->nullable();
+            $table->timestamp('using_date')->nullable();
+            $table->timestamp('approved_date')->nullable();
             $table->string('status')->default('acc0');
 
             $table->foreign('pembuat_id')->references('id')->on('users')->onDelete('cascade');

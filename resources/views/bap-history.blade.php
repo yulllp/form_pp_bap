@@ -192,7 +192,15 @@
             month: 'short',
             year: 'numeric'
         };
-        return date.toLocaleDateString('en-GB', options); // '26 Sept 2024'
+
+        const formattedDate = date.toLocaleDateString('en-GB', options); // '26 Sept 2024'
+        const formattedTime = date.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false // 24-hour format
+        }); // '14:30'
+
+        return `${formattedDate} ${formattedTime}`; // '26 Sept 2024 14:30'
     }
 
     function setStepComplete(stepIndex, title, sub) {
