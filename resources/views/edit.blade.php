@@ -16,17 +16,6 @@
     <form class="xl:px-20" action="{{ route('permintaan.approval', $data->id)}}" method="post">
       @csrf
       @method('PUT')
-      @if (session('success'))
-      <div id="alert" class="relative flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 transition-opacity duration-500 ease-in-out opacity-100" role="alert">
-        <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-        </svg>
-        <span class="sr-only">Info</span>
-        <div>
-          <span class="font-medium">{{ session('success') }}</span>
-        </div>
-      </div>
-      @endif
 
       @if ($errors->any())
       <div id="alert" class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800" role="alert">
@@ -76,10 +65,10 @@
         <div>
           <label for="pt_tujuan_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pembelian untuk PT</label>
           <select id="pt_tujuan_id" name="pt_tujuan_id"
-            class="{{ Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id 
+            class="{{ Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders)) 
       ? 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' 
       : 'bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed' }}"
-            {{ Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id ? 'disabled' : '' }} required>
+            {{ Auth::user()->department->nama == 'IT' || in_array(Auth::id(),$leaders) ? 'disabled' : '' }} required>
             @foreach($pts as $pt)
             <option value="{{ $pt->id }}" {{ $pt->name == $data->pt_tujuan->name ? 'selected' : '' }}>
               {{ $pt->name }}
@@ -90,15 +79,15 @@
         <div class="md:col-span-2">
           <label for="alasan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alasan permintaan</label>
           <textarea id="alasan" rows="4" name="alasan"
-            class="{{ Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id 
+            class="{{ Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders)) 
       ? 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' 
       : 'bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed' }}"
             placeholder="Masukan alasan"
-            {{ Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id ? 'disabled' : '' }} required>{{ $data->alasan }}</textarea>
+            {{ Auth::user()->department->nama == 'IT' || in_array(Auth::id(),$leaders) ? 'disabled' : '' }} required>{{ $data->alasan }}</textarea>
         </div>
       </div>
 
-      @if (Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id)
+      @if (Auth::user()->department->nama == 'IT' || in_array(Auth::id(),$leaders))
       <input type="hidden" id="barangData" value="{{json_encode($barangData)}}">
       <div>
         <h1 class="block mb-2 text-md font-medium text-gray-900 dark:text-white">Keterangan Barang</h1>
@@ -140,7 +129,7 @@
       </div>
       @endif
 
-      @if (Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id)
+      @if (Auth::user()->department->nama == 'IT' || in_array(Auth::id(),$leaders))
       <div class="overflow-auto shadow-md sm:rounded-lg mb-10">
         <table class="table w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -183,7 +172,7 @@
         <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed" disabled>{{ $data->revision_it }}</textarea>
       </div>
       @endif
-      @elseif (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id)
+      @elseif (Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders)))
       @if($data->revision_user)
       <div class="mb-10">
         <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Revisi untuk User</label>
@@ -196,13 +185,13 @@
       <input type="hidden" name="status" id="status" value="">
 
       <div class="flex items-end justify-end space-x-6">
-        @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-2')) || (Auth::user()->id == Auth::user()->department->leader->id && $data->status == 'acc1'))
+        @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-2')) || (in_array(Auth::id(),$leaders) && $data->status == 'acc1'))
         <button type="button" id="disapproveBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Disapprove</button>
         @endif
-        @if (Auth::user()->department->nama == 'IT' || Auth::user()->id != Auth::user()->department->leader->id)
+        @if (Auth::user()->department->nama == 'IT' || !(in_array(Auth::id(),$leaders)))
         <button type="button" id="simpanBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Simpan</button>
         @endif
-        @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->id == Auth::user()->department->leader->id && ($data->status == 'acc1' || $data->status == 'acc-2')))
+        @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (in_array(Auth::id(),$leaders) && ($data->status == 'acc1' || $data->status == 'acc-2')))
         <button type="button" id="approveBtn" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Approve</button>
         @endif
       </div>

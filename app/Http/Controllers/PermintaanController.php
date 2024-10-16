@@ -8,6 +8,7 @@ use App\Mail\ApproveMail;
 use App\Mail\ApproveMailIT;
 use App\Mail\ToMailManager;
 use App\Models\Barang;
+use App\Models\Department;
 use App\Models\PermintaanPembelian;
 use Dompdf\Dompdf;
 use App\Models\PtTujuan;
@@ -23,7 +24,9 @@ class PermintaanController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->id == Auth::user()->department->leader->id || Auth::user()->department->name == 'IT') {
+        $leaders = Department::pluck('pemimpin_id')->toArray();
+        // dd($leaders);
+        if (in_array(Auth::id(),$leaders) || Auth::user()->department->nama == 'IT') {
             return to_route('dashboard');
         }
 
@@ -92,13 +95,18 @@ class PermintaanController extends Controller
 
     public function approvalIndex($id)
     {
+        $leaders = Department::pluck('pemimpin_id')->toArray();
         $dataPP = PermintaanPembelian::with(['user', 'barang', 'pt_tujuan'])->findOrFail($id);
 
-        if (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id) {
+        if (Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))) {
             return to_route('dashboard');
         }
 
-        if (($dataPP->status == 'acc0' || $dataPP->status == 'acc-1' || $dataPP->status == 'acc2') && Auth::user()->id == Auth::user()->department->leader->id) {
+        if ($dataPP->status == 'acc2') {
+            return to_route('dashboard');
+        }
+
+        if (($dataPP->status == 'acc0' || $dataPP->status == 'acc-1' || $dataPP->status == 'acc2') && in_array(Auth::id(),$leaders)) {
             return to_route('dashboard');
         }
 
@@ -106,37 +114,40 @@ class PermintaanController extends Controller
             return to_route('dashboard');
         }
 
-        if ($dataPP->user->department_id != Auth::user()->department->leader->department_id && Auth::user()->id == Auth::user()->department->leader->id) {
+        if ($dataPP->user->department_id != Auth::user()->department->leader->department_id && in_array(Auth::id(),$leaders)) {
             return to_route('dashboard');
         }
 
         $pt_tujuan = PtTujuan::all();
         $barangData = Barang::where('pp_id', $id)->orderBy('id', 'asc')->get();
-        return view('edit', ['data' => $dataPP, 'title' => 'Approval permintaan', 'pts' => $pt_tujuan, 'barangData' => $barangData]);
+        return view('edit', ['data' => $dataPP, 'title' => 'Approval permintaan', 'pts' => $pt_tujuan, 'barangData' => $barangData, 'leaders' => $leaders]);
     }
 
     public function editIndex($id)
     {
+        $leaders = Department::pluck('pemimpin_id')->toArray();
         $dataPP = PermintaanPembelian::with(['user', 'barang', 'pt_tujuan'])->findOrFail($id);
-        if (Auth::user()->$id != $dataPP->user_id && (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id)) {
+
+        if (Auth::user()->id != $dataPP->user_id) {
             return to_route('dashboard');
         }
 
-        if (Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id) {
+        if (Auth::user()->department->nama == 'IT' || in_array(Auth::id(),$leaders)) {
             return to_route('dashboard');
         }
 
-        if ($dataPP->status != 'acc0') {
+        if ($dataPP->status != 'acc0' && $dataPP->status != 'acc-1') {
             return to_route('dasboard');
         }
 
         $pt_tujuan = PtTujuan::all();
-        return view('edit', ['data' => $dataPP, 'title' => 'Edit permintaan', 'pts' => $pt_tujuan, 'barangData' => $dataPP->barang]);
+        return view('edit', ['data' => $dataPP, 'title' => 'Edit permintaan', 'pts' => $pt_tujuan, 'barangData' => $dataPP->barang, 'leaders' => $leaders]);
     }
 
     public function update(Request $request, $id)
     {
-        if (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id) {
+        $leaders = Department::pluck('pemimpin_id')->toArray();
+        if (Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))) {
             try {
                 $validated = $request->validate([
                     'pt_tujuan_id' => 'required|exists:pt_tujuans,id',
@@ -148,7 +159,7 @@ class PermintaanController extends Controller
                 $pp->alasan = $validated['alasan'];
                 $pp->status = 'acc0';
                 $pp->save();
-                return redirect()->route('permintaan.edit', $id)->with('success', 'Permintaan pembelian berhasil di edit!');
+                return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian berhasil di edit!');
             } catch (\Exception $e) {
                 dd($e->getMessage());
                 return back()->withErrors(['error' => 'Validation error: ' . $e->getMessage()]);
@@ -255,7 +266,7 @@ class PermintaanController extends Controller
                     $subject = "Pengajuan Permintaan Pembelian Internal - IT";
                     Mail::to($to)->send(new ToMailManager($msg, $subject));
 
-                    return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian diapprove!');
+                    return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian diapprove!');
                 } elseif ($validated['status'] == 'disapprove') {
                     $dataPP = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang', 'approval'])->findOrFail($id);
                     $dataPP->status = 'acc-1';
@@ -272,14 +283,14 @@ class PermintaanController extends Controller
                     $subject = "Pengajuan Permintaan Pembelian Internal - IT";
 
                     Mail::to($to)->send(new ApproveMailIT($msg, $subject));
-                    return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian disapprove!');
+                    return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian disapprove!');
                 }
 
-                return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian berhasil tersimpan.');
+                return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian berhasil tersimpan.');
             } catch (\Exception $e) {
                 return back()->withErrors(['error' => $e->getMessage()]);
             }
-        } elseif (Auth::user()->id == Auth::user()->department->leader->id) {
+        } elseif (in_array(Auth::id(),$leaders)) {
             $validated = $request->validate([
                 'status' => 'required|string',
             ]);
@@ -326,7 +337,7 @@ class PermintaanController extends Controller
 
                 Mail::to($to)->send(new AccMailManagerforUser($msg, $subject));
 
-                return redirect()->route('permintaan.approval', $id)->with('success', 'Permintaan pembelian disapprove!');
+                return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian disapprove!');
             }
         }
     }

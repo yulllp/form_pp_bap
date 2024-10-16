@@ -33,7 +33,10 @@
             <th scope="col" class="px-6 py-3">
               No PPI
             </th>
-            @if (Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id)
+            <th scope="col" class="px-6 py-3">
+              Tanggal
+            </th>
+            @if (Auth::user()->department->nama == 'IT' || in_array(Auth::id(),$leaders))
             <th scope="col" class="px-6 py-3">
               Nama
             </th>
@@ -47,7 +50,7 @@
             <th scope="col" class="px-6 py-3">
               Alasan permintaan
             </th>
-            @if (Auth::user()->department->nama == 'IT' || (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id))
+            @if (Auth::user()->department->nama == 'IT' || (Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))))
             <th scope="col" class="px-6 py-3">
               Revisi
             </th>
@@ -66,7 +69,10 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->nomor }}
             </td>
-            @if (Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id)
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ \Carbon\Carbon::parse($data->created_at)->format('d-m-Y H:i') }}
+            </td>
+            @if (Auth::user()->department->nama == 'IT' || in_array(Auth::id(),$leaders))
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->user->name }}
             </td>
@@ -84,23 +90,23 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->revision_it ? 'ada, silahkan lakukan pengeditan' : '-' }}
             </td>
-            @elseif (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id)
+            @elseif (Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders)))
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->revision_user ? 'ada, silahkan lakukan pengeditan' : '-' }}
             </td>
             @endif
             <td class="px-6 py-4 flex space-x-3">
-              <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal" data-original-icon data-status="{{ $data->status }}" data-create="{{ $data->created_at }}" data-confirm-it="{{ $data->it_confirm_date }}" data-confirm-manager="{{ $data->manager_confirm_date }}" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+              <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal" data-original-icon data-status="{{ $data->status }}" data-create="{{ $data->updated_at }}" data-confirm-it="{{ $data->it_confirm_date }}" data-confirm-manager="{{ $data->manager_confirm_date }}" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                 Status
               </button>
-              @if ((Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id) && ($data->status == 'acc0' || $data->status == 'acc-1'))
+              @if ((Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))) && ($data->status == 'acc0' || $data->status == 'acc-1'))
               <a href="{{ route('permintaan.edit', $data->id) }}">
                 <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                   Edit
                 </button>
               </a>
               @endif
-              @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->id == Auth::user()->department->leader->id && ($data->status == 'acc1' || $data->status == 'acc-2')))
+              @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (in_array(Auth::id(),$leaders) && ($data->status == 'acc1' || $data->status == 'acc-2')))
               <a href="{{ route('permintaan.approval', $data->id) }}">
                 <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                   Approval
@@ -112,7 +118,7 @@
                   Details
                 </button>
               </a>
-              @if ((Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id) && ($data->status == 'acc0' || $data->status == 'acc-1'))
+              @if ((Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))) && ($data->status == 'acc0' || $data->status == 'acc-1'))
               <button data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" type="button">
                 Delete
               </button>
@@ -283,7 +289,15 @@
       month: 'short',
       year: 'numeric'
     };
-    return date.toLocaleDateString('en-GB', options); // '26 Sept 2024'
+
+    const formattedDate = date.toLocaleDateString('en-GB', options); // '26 Sept 2024'
+    const formattedTime = date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false // 24-hour format
+    }); // '14:30'
+
+    return `${formattedDate} ${formattedTime}`; // '26 Sept 2024 14:30'
   }
 
   function setStepComplete(stepIndex, title, sub) {

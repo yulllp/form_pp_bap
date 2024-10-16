@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('permintaan_pembelian', function (Blueprint $table) {
-            $table->date('it_confirm_date')->nullable();
-            $table->date('manager_confirm_date')->nullable();
+            $table->timestamp('it_confirm_date')->nullable();
+            $table->timestamp('manager_confirm_date')->nullable();
         });
     }
 

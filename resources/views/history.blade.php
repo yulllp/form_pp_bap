@@ -33,7 +33,10 @@
             <th scope="col" class="px-6 py-3">
               No PPI
             </th>
-            @if (Auth::user()->role == 'admin' || Auth::user()->id == Auth::user()->department->leader->id)
+            <th scope="col" class="px-6 py-3">
+              Tanggal
+            </th>
+            @if (Auth::user()->role == 'admin' || in_array(Auth::id(),$leaders))
             <th scope="col" class="px-6 py-3">
               Nama
             </th>
@@ -61,7 +64,10 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->nomor }}
             </td>
-            @if (Auth::user()->role == 'admin' || Auth::user()->id == Auth::user()->department->leader->id)
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ \Carbon\Carbon::parse($data->updated_at)->format('d-m-Y H:i') }}
+            </td>
+            @if (Auth::user()->role == 'admin' || in_array(Auth::id(),$leaders))
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->user->name }}
             </td>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\PermintaanPembelian;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,7 +12,8 @@ class HistoryController extends Controller
 {
     public function index()
     {
+        $leaders = Department::pluck('pemimpin_id')->toArray();
         $data = PermintaanPembelian::with('pt_tujuan')->where('status', 'acc2')->latest()->paginate(20);
-        return view('history', ['title' => 'History', 'datas' => $data]);
+        return view('history', ['title' => 'History', 'datas' => $data, 'leaders' => $leaders]);
     }
 }
