@@ -99,6 +99,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/berita/{id}', [DashboardController::class, 'showEditForm'])->name('editform.bap');
             Route::get('/bap/edit/{id}', [BeritaController::class, 'editIndex'])->name('bap.editIndex');
             Route::put('/bap/edit/{id}', [BeritaController::class, 'update'])->name('update.bap');
+            Route::delete('/bap/delete/{id}',[BeritaController::class, 'destroy'])->name('bap.destroy');
         });
     });
 });

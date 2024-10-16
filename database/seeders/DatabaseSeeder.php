@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
             // PtTujuanSeeder::class
             BrandSeeder::class,
             TypeSeeder::class,
-            OSSeeder::class,
-            OfficeSeeder::class
+            // OSSeeder::class,
+            // OfficeSeeder::class
         ]);
     }
 }

@@ -504,6 +504,16 @@ class BeritaController extends Controller
         return redirect()->route('ongoing.bap')->with('success', 'Approval status updated successfully.');
     }
 
+    public function destroy($id){
+        $bap = BeritaAcara::findOrFail($id);
+        if($bap->pembuat->id === Auth::id()){
+            $bap->delete();
+            return redirect()->route('ongoing.bap')->with('success', 'Data deleted successfully.');
+        }else{
+            return redirect()->route('ongoing.bap')->with('error', 'Data cannot be deleted.');
+        }
+    }
+
     public function printbap($id)
     {
         $bap = BeritaAcara::with('penerima', 'pembuat', 'detail_barang', 'pembelian', 'pengecekan')->find($id);

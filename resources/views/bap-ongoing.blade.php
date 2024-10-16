@@ -139,6 +139,12 @@
                                 </button>
                             </a>
                             @endif
+                            @if (($berita->status === 'acc0' || $berita->status === 'acc-1' || $berita->status === 'acc-2' || $berita->status === 'acc-3') && $berita->pembuat->id === Auth::id())
+                            <button class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" type="button" onclick="openModal()" data-modal-target="deleteModal" data-modal-toggle="deleteModal"
+                                data-delete-id="{{ $berita->id }}">
+                                Delete
+                            </button>
+                            @endif
                         </td>
                     </tr>
                 </tbody>
@@ -206,6 +212,30 @@
                 </div>
             </div>
         </div>
+        <div id="deletemodal" tabindex="-1" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="relative p-4 w-full max-w-md max-h-full">
+                <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-700 transition-transform transform duration-300 scale-100">
+                    <button type="button" class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onclick="closeModal()">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                    <div class="p-6 text-center">
+                        <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Confirmation</h3>
+                        <p class="mb-5 text-md text-gray-600 dark:text-gray-300">Are you sure you want to delete this?</p>
+                        <form method="POST" action="#" id="deleteform" class="mt-4">
+                            @csrf
+                            @method('DELETE')
+                            <div class="flex justify-center space-x-4">
+                                <button type="button" onclick="closeModal()" class="px-5 py-2.5 text-sm font-medium text-gray-900 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-900 dark:focus:ring-gray-600">Cancel</button>
+                                <button type="submit" class="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-lg text-sm px-5 py-2.5 transition duration-200">Confirm</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="p-4">
             {{ $beritas->links() }}
         </div>
@@ -214,6 +244,16 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-delete-id]').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-delete-id');
+                console.log(id);
+                const deleteForm = document.getElementById('deleteform');
+                if (deleteForm) {
+                    deleteForm.action = "{{ route('bap.destroy', ':id') }}".replace(':id', id);
+                }
+            });
+        });
         // For the error alert
         const errorAlertBox = document.getElementById('error-alert');
         const errorCloseButton = document.getElementById('close-error-alert');
@@ -270,6 +310,16 @@
         showAlert();
 
     });
+
+    function openModal() {
+        document.getElementById('deletemodal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeModal() {
+        document.getElementById('deletemodal').classList.add('hidden');
+        document.body.style.overflow = ''; // Restore original overflow
+    }
     document.querySelectorAll('button[data-modal-target="timeline-modal"]').forEach(button => {
         button.addEventListener('click', function() {
             const status = this.getAttribute('data-status');
@@ -317,7 +367,8 @@
                 setStepInProgress1(0, 'Terdapat kesalahan pada data BAP', 'Menunggu revisi data BAP');
                 displayRedCross(3, 'Permintaan ditolak oleh Manager', `Data ditolak pada ${manager_confirm_date}. Silahkan menghubungi pihak Manager`)
                 setStepComplete(1, 'Konfirmasi dari Pihak Purchasing selesai', `Data dikonfirm pada ${purchasing_confirm_date}`);
-                setStepComplete(2, 'Konfirmasi dari Pihak User selesai', `Data dikonfirm pada ${user_confirm_date}`);            }
+                setStepComplete(2, 'Konfirmasi dari Pihak User selesai', `Data dikonfirm pada ${user_confirm_date}`);
+            }
         });
     });
 
