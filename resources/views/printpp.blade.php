@@ -218,7 +218,7 @@
                         @endif
                     </td>
                     <td class="ttd">
-                        @if ($pp->approval->ttd && ($pp->status == 'acc1' || $pp->status == 'acc-2' || $pp->status == 'acc2'))
+                        @if ($pp->approval && $pp->approval->ttd && ($pp->status == 'acc1' || $pp->status == 'acc-2' || $pp->status == 'acc2'))
                         <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $pp->approval->ttd))); ?>">
                         @endif
                     </td>

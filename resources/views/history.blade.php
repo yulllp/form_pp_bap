@@ -2,6 +2,27 @@
   @section('title', 'On Going')
   <x-slot:title>{{$title}} </x-slot:title>
   <section class="bg-white dark:bg-gray-900 w-full relative px-4 py-4 sm:px-6">
+    @if (session('success'))
+    <div id="success-alert" class="relative flex w-full items-center p-4 mb-4 text-green-800 border border-green-300 bg-green-50 dark:text-green-400 dark:bg-gray-800 dark:border-green-800 rounded-md shadow-sm" role="alert">
+      <div id="progress-bar" class="absolute top-0 left-0 h-1 bg-green-500 rounded-t-md" style="width: 100%; transition: width 5s linear;"></div>
+
+      <svg class="flex-shrink-0 w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+      </svg>
+
+      <div class="ml-3 text-sm font-medium">
+        {{ session('success') }}
+      </div>
+
+      <button type="button" id="close-alert" class="absolute top-2 right-2 bg-green-50 text-green-500 rounded-lg p-1.5 hover:bg-green-200 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+    @endif
+
     <div class="overflow-auto shadow-md sm:rounded-lg">
       <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -12,7 +33,7 @@
             <th scope="col" class="px-6 py-3">
               No PPI
             </th>
-            @if (Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name)
+            @if (Auth::user()->role == 'admin' || Auth::user()->id == Auth::user()->department->leader->id)
             <th scope="col" class="px-6 py-3">
               Nama
             </th>
@@ -40,7 +61,7 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->nomor }}
             </td>
-            @if (Auth::user()->role == 'admin' || Auth::user()->name == Auth::user()->department->leader->name)
+            @if (Auth::user()->role == 'admin' || Auth::user()->id == Auth::user()->department->leader->id)
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->user->name }}
             </td>
@@ -128,91 +149,121 @@
 </x-layout>
 
 <script>
-  document.querySelectorAll('button[data-modal-target="timeline-modal"]').forEach(button => {
-    button.addEventListener('click', function() {
-      const status = this.getAttribute('data-status');
-      let created_at = formatDate(this.getAttribute('data-create'));
-      let it_confirm_date = formatDate(this.getAttribute('data-confirm-it'));
-      let manager_confirm_date = formatDate(this.getAttribute('data-confirm-manager'));
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('button[data-modal-target="timeline-modal"]').forEach(button => {
+      button.addEventListener('click', function() {
+        const status = this.getAttribute('data-status');
+        let created_at = formatDate(this.getAttribute('data-create'));
+        let it_confirm_date = formatDate(this.getAttribute('data-confirm-it'));
+        let manager_confirm_date = formatDate(this.getAttribute('data-confirm-manager'));
 
-      document.querySelectorAll('.step').forEach(step => {
-        step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700';
-        step.querySelector('svg').className = 'w-3.5 h-3.5 text-gray-500 dark:text-gray-400';
+        document.querySelectorAll('.step').forEach(step => {
+          step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700';
+          step.querySelector('svg').className = 'w-3.5 h-3.5 text-gray-500 dark:text-gray-400';
+        });
+
+        if (status === 'acc0') {
+          setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+          setStepInProgress1(1, 'Menunggu konfirmasi dari Pihak IT');
+        } else if (status === 'acc1') {
+          setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+          setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
+          setStepInProgress2(2, 'Menunggu konfirmasi dari Manager');
+        } else if (status === 'acc2') {
+          setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+          setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
+          setStepComplete(2, 'Konfirmasi dari Manager selesai', `Data dikonfirm pada ${manager_confirm_date}`);
+        } else if (status === 'acc-1') {
+          setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+          displayRedCross(1, 'Permintaan ditolak oleh IT', `Data ditolak pada ${it_confirm_date}. Silahkan menghubungi pihak IT`)
+        } else if (status === 'acc-2') {
+          setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
+          setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
+          displayRedCross(2, 'Permintaan ditolak oleh Manager', `Data dikonfirm pada ${manager_confirm_date}. Silahkan menunggu pemberitahuan pihak IT`);
+        }
       });
-
-      if (status === 'acc0') {
-        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        setStepInProgress1(1, 'Menunggu konfirmasi dari Pihak IT');
-      } else if (status === 'acc1') {
-        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
-        setStepInProgress2(2, 'Menunggu konfirmasi dari Manager');
-      } else if (status === 'acc2') {
-        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
-        setStepComplete(2, 'Konfirmasi dari Manager selesai', `Data dikonfirm pada ${manager_confirm_date}`);
-      } else if (status === 'acc-1') {
-        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        displayRedCross(1, 'Permintaan ditolak oleh IT', `Data ditolak pada ${it_confirm_date}. Silahkan menghubungi pihak IT`)
-      } else if (status === 'acc-2') {
-        setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
-        displayRedCross(2, 'Permintaan ditolak oleh Manager', `Data dikonfirm pada ${manager_confirm_date}. Silahkan menunggu pemberitahuan pihak IT`);
-      }
     });
-  });
 
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    };
-    return date.toLocaleDateString('en-GB', options); // '26 Sept 2024'
-  }
+    const alertBox = document.getElementById('success-alert');
+    const closeButton = document.getElementById('close-alert');
+    const progressBar = document.getElementById('progress-bar');
 
-  function setStepComplete(stepIndex, title, sub) {
-    const step = document.querySelectorAll('.step')[stepIndex];
-    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-green-900';
-    step.querySelector('svg').className = 'w-3.5 h-3.5 text-green-500 dark:text-green-400';
-    step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+    function showAlert() {
+      alertBox.classList.remove('hidden');
+      progressBar.style.transition = 'none'; // Disable transition to reset
+      progressBar.style.width = '100%'; // Start full
+
+      // Delay to let the browser process width change, then start animation
+      setTimeout(() => {
+        progressBar.style.transition = 'width 5s linear'; // Enable transition
+        progressBar.style.width = '0'; // Shrink to 0 over 5 seconds
+      }, 100); // Short delay to allow DOM update
+
+      // Automatically hide the alert after 5 seconds
+      setTimeout(() => {
+        alertBox.classList.add('hidden');
+      }, 5100); // Delay slightly longer than the transition
+    }
+
+    // Close the alert when the close button is clicked
+    closeButton.addEventListener('click', () => {
+      alertBox.classList.add('hidden');
+    });
+
+    showAlert();
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      const options = {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      };
+      return date.toLocaleDateString('en-GB', options); // '26 Sept 2024'
+    }
+
+    function setStepComplete(stepIndex, title, sub) {
+      const step = document.querySelectorAll('.step')[stepIndex];
+      step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-green-900';
+      step.querySelector('svg').className = 'w-3.5 h-3.5 text-green-500 dark:text-green-400';
+      step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
                   </svg>`
-    step.querySelector('h3').textContent = title;
-    step.querySelector('p').innerHTML = sub;
-  }
+      step.querySelector('h3').textContent = title;
+      step.querySelector('p').innerHTML = sub;
+    }
 
-  function setStepInProgress1(stepIndex, title, sub) {
-    const step = document.querySelectorAll('.step')[stepIndex];
-    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-yellow-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-yellow-600';
-    step.querySelector('svg').className = 'w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400';
-    step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+    function setStepInProgress1(stepIndex, title, sub) {
+      const step = document.querySelectorAll('.step')[stepIndex];
+      step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-yellow-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-yellow-600';
+      step.querySelector('svg').className = 'w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400';
+      step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
                     <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Z" />
                   </svg>`
-    step.querySelector('h3').textContent = title;
-    step.querySelector('p').innerHTML = sub;
-  }
+      step.querySelector('h3').textContent = title;
+      step.querySelector('p').innerHTML = sub;
+    }
 
-  function setStepInProgress2(stepIndex, title, sub) {
-    const step = document.querySelectorAll('.step')[stepIndex];
-    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-yellow-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-yellow-600';
-    step.querySelector('svg').className = 'w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400';
-    step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+    function setStepInProgress2(stepIndex, title, sub) {
+      const step = document.querySelectorAll('.step')[stepIndex];
+      step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-yellow-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-yellow-600';
+      step.querySelector('svg').className = 'w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400';
+      step.querySelector('span').innerHTML = `<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
                     <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
                   </svg>`
-    step.querySelector('h3').textContent = title;
-    step.querySelector('p').innerHTML = sub;
-  }
+      step.querySelector('h3').textContent = title;
+      step.querySelector('p').innerHTML = sub;
+    }
 
-  function displayRedCross(stepIndex, title, sub) {
-    const step = document.querySelectorAll('.step')[stepIndex];
-    step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-red-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-red-900';
-    step.querySelector('svg').className = 'w-3.5 h-3.5 text-red-500 dark:text-red-400';
-    step.querySelector('svg').innerHTML = `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
+    function displayRedCross(stepIndex, title, sub) {
+      const step = document.querySelectorAll('.step')[stepIndex];
+      step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-red-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-red-900';
+      step.querySelector('svg').className = 'w-3.5 h-3.5 text-red-500 dark:text-red-400';
+      step.querySelector('svg').innerHTML = `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1l14 14m0-14L1 15" />
               </svg>`;
-    step.querySelector('h3').textContent = title;
-    step.querySelector('p').innerHTML = sub;
-  }
+      step.querySelector('h3').textContent = title;
+      step.querySelector('p').innerHTML = sub;
+    }
+  });
 </script>

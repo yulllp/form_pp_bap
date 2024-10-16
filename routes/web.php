@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/bap/approve/{id}', [BeritaController::class, 'approve'])->name('bap.approve');
         Route::put('/bap/reject/{id}', [BeritaController::class, 'reject'])->name('bap.reject');
         Route::get('/bap/history', [BeritaController::class, 'historyIndex'])->name('history.bap');
+        Route::delete('/permintaan/{id}/delete', [PermintaanController::class, 'destroy'])->name('delete.permintaan');
 
         Route::group(['middleware' => 'is_admin'], function () {
             Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');

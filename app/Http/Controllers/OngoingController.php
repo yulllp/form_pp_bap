@@ -16,9 +16,9 @@ class OngoingController extends Controller
             $data = PermintaanPembelian::with('pt_tujuan')->whereNot('status', 'acc2')->where('user_id', Auth::user()->id)->latest()->paginate(20);
         } elseif (Auth::user()->department->nama == 'IT') {
             $data = PermintaanPembelian::with('pt_tujuan')->whereIn('status', ['acc0', 'acc-2', 'acc-1', 'acc1'])->latest()->paginate(20);
-        } elseif (Auth::user()->name == Auth::user()->department->leader->name) {
+        } elseif (Auth::user()->id == Auth::user()->department->leader->id) {
             $data = PermintaanPembelian::with('pt_tujuan', 'user')
-                ->whereIn('status', ['acc1', 'acc-2'])
+                ->whereIn('status', ['acc0', 'acc-2', 'acc-1', 'acc1'])
                 ->whereHas('user', function ($query) use ($user) {
                     $query->where('department_id', $user->department_id);
                 })

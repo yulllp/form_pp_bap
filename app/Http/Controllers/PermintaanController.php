@@ -23,6 +23,10 @@ class PermintaanController extends Controller
 {
     public function index()
     {
+        if (Auth::user()->id == Auth::user()->department->leader->id || Auth::user()->department->name == 'IT') {
+            return to_route('dashboard');
+        }
+
         $pt_tujuan = PtTujuan::all();
         return view('permintaan', ['title' => 'Permintaan Pembeliaan', 'pts' => $pt_tujuan]);
     }
@@ -88,22 +92,51 @@ class PermintaanController extends Controller
 
     public function approvalIndex($id)
     {
-        $pt_tujuan = PtTujuan::all();
         $dataPP = PermintaanPembelian::with(['user', 'barang', 'pt_tujuan'])->findOrFail($id);
+
+        if (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id) {
+            return to_route('dashboard');
+        }
+
+        if (($dataPP->status == 'acc0' || $dataPP->status == 'acc-1' || $dataPP->status == 'acc2') && Auth::user()->id == Auth::user()->department->leader->id) {
+            return to_route('dashboard');
+        }
+
+        if ($dataPP->status == 'acc2' && Auth::user()->department->nama != 'IT') {
+            return to_route('dashboard');
+        }
+
+        if ($dataPP->user->department_id != Auth::user()->department->leader->id && Auth::user()->id == Auth::user()->department->leader->id) {
+            return to_route('dashboard');
+        }
+
+        $pt_tujuan = PtTujuan::all();
         $barangData = Barang::where('pp_id', $id)->orderBy('id', 'asc')->get();
         return view('edit', ['data' => $dataPP, 'title' => 'Approval permintaan', 'pts' => $pt_tujuan, 'barangData' => $barangData]);
     }
 
     public function editIndex($id)
     {
-        $pt_tujuan = PtTujuan::all();
         $dataPP = PermintaanPembelian::with(['user', 'barang', 'pt_tujuan'])->findOrFail($id);
+        if (Auth::user()->$id != $dataPP->user_id && (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id)) {
+            return to_route('dashboard');
+        }
+
+        if (Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id) {
+            return to_route('dashboard');
+        }
+
+        if ($dataPP->status != 'acc0') {
+            return to_route('dasboard');
+        }
+
+        $pt_tujuan = PtTujuan::all();
         return view('edit', ['data' => $dataPP, 'title' => 'Edit permintaan', 'pts' => $pt_tujuan, 'barangData' => $dataPP->barang]);
     }
 
     public function update(Request $request, $id)
     {
-        if (Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name) {
+        if (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id) {
             try {
                 $validated = $request->validate([
                     'pt_tujuan_id' => 'required|exists:pt_tujuans,id',
@@ -136,7 +169,6 @@ class PermintaanController extends Controller
                 foreach ($dataArray as $index => $data) {
                     // Validate each item in the dataArray
                     $validator = Validator::make($data, [
-                        'id' => 'required|uuid',
                         'nama' => 'required|string',
                         'jumlah' => 'required|numeric',
                         'satuan' => 'required|string',
@@ -247,7 +279,7 @@ class PermintaanController extends Controller
             } catch (\Exception $e) {
                 return back()->withErrors(['error' => $e->getMessage()]);
             }
-        } elseif (Auth::user()->name == Auth::user()->department->leader->name) {
+        } elseif (Auth::user()->id == Auth::user()->department->leader->id) {
             $validated = $request->validate([
                 'status' => 'required|string',
             ]);
@@ -299,6 +331,12 @@ class PermintaanController extends Controller
         }
     }
 
+    public function destroy($id) {
+        $data = PermintaanPembelian::findOrFail($id);
+        $data->delete();
+
+        return back()->with('success', 'Data berhasil dihapus');
+    }
 
     public function printpp($id)
     {

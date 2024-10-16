@@ -2,6 +2,27 @@
   @section('title', 'On Going')
   <x-slot:title>{{$title}} </x-slot:title>
   <section class="bg-white dark:bg-gray-900 w-full relative px-4 py-4 sm:px-6">
+    @if (session('success'))
+    <div id="success-alert" class="relative flex w-full items-center p-4 mb-4 text-green-800 border border-green-300 bg-green-50 dark:text-green-400 dark:bg-gray-800 dark:border-green-800 rounded-md shadow-sm" role="alert">
+      <div id="progress-bar" class="absolute top-0 left-0 h-1 bg-green-500 rounded-t-md" style="width: 100%; transition: width 5s linear;"></div>
+
+      <svg class="flex-shrink-0 w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+      </svg>
+
+      <div class="ml-3 text-sm font-medium">
+        {{ session('success') }}
+      </div>
+
+      <button type="button" id="close-alert" class="absolute top-2 right-2 bg-green-50 text-green-500 rounded-lg p-1.5 hover:bg-green-200 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+    @endif
+
     <div class="overflow-auto shadow-md sm:rounded-lg">
       <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -12,7 +33,7 @@
             <th scope="col" class="px-6 py-3">
               No PPI
             </th>
-            @if (Auth::user()->department->nama == 'IT' || Auth::user()->name == Auth::user()->department->leader->name)
+            @if (Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id)
             <th scope="col" class="px-6 py-3">
               Nama
             </th>
@@ -26,7 +47,7 @@
             <th scope="col" class="px-6 py-3">
               Alasan permintaan
             </th>
-            @if (Auth::user()->department->nama == 'IT' || (Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name))
+            @if (Auth::user()->department->nama == 'IT' || (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id))
             <th scope="col" class="px-6 py-3">
               Revisi
             </th>
@@ -45,7 +66,7 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->nomor }}
             </td>
-            @if (Auth::user()->department->nama == 'IT' || Auth::user()->name == Auth::user()->department->leader->name)
+            @if (Auth::user()->department->nama == 'IT' || Auth::user()->id == Auth::user()->department->leader->id)
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->user->name }}
             </td>
@@ -63,7 +84,7 @@
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->revision_it ? 'ada, silahkan lakukan pengeditan' : '-' }}
             </td>
-            @elseif (Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name)
+            @elseif (Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id)
             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
               {{ $data->revision_user ? 'ada, silahkan lakukan pengeditan' : '-' }}
             </td>
@@ -72,14 +93,14 @@
               <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal" data-original-icon data-status="{{ $data->status }}" data-create="{{ $data->created_at }}" data-confirm-it="{{ $data->it_confirm_date }}" data-confirm-manager="{{ $data->manager_confirm_date }}" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                 Status
               </button>
-              @if ((Auth::user()->department->nama != 'IT' && Auth::user()->name != Auth::user()->department->leader->name) && ($data->status == 'acc0' || $data->status == 'acc-1'))
+              @if ((Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id) && ($data->status == 'acc0' || $data->status == 'acc-1'))
               <a href="{{ route('permintaan.edit', $data->id) }}">
                 <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                   Edit
                 </button>
               </a>
               @endif
-              @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->name == Auth::user()->department->leader->name && ($data->status == 'acc1' || $data->status == 'acc-2')))
+              @if ((Auth::user()->department->nama == 'IT' && ($data->status == 'acc0' || $data->status == 'acc1' || $data->status == 'acc-1' || $data->status == 'acc-2')) || (Auth::user()->id == Auth::user()->department->leader->id && ($data->status == 'acc1' || $data->status == 'acc-2')))
               <a href="{{ route('permintaan.approval', $data->id) }}">
                 <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                   Approval
@@ -91,9 +112,44 @@
                   Details
                 </button>
               </a>
+              @if ((Auth::user()->department->nama != 'IT' && Auth::user()->id != Auth::user()->department->leader->id) && ($data->status == 'acc0' || $data->status == 'acc-1'))
+              <button data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" type="button">
+                Delete
+              </button>
+              @endif
             </td>
           </tr>
         </tbody>
+
+        <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+          <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+              <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Close modal</span>
+              </button>
+              <div class="p-4 md:p-5 text-center">
+                <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <h3 id="modalMessage" class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Apakah anda yakin untuk menghapus data ini?</h3>
+                <div class="flex space-x-2 justify-center">
+                  <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-red-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
+                  <form action="{{ route("delete.permintaan", $data->id) }}" method="post" class="m-0 p-0">
+                    @csrf
+                    @method('DELETE')
+                    <button data-modal-hide="popup-modal" type="submit" class="ms-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                      Yes, I'm sure
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         @endforeach
       </table>
     </div>
@@ -191,6 +247,34 @@
       }
     });
   });
+
+  const alertBox = document.getElementById('success-alert');
+  const closeButton = document.getElementById('close-alert');
+  const progressBar = document.getElementById('progress-bar');
+
+  function showAlert() {
+    alertBox.classList.remove('hidden');
+    progressBar.style.transition = 'none'; // Disable transition to reset
+    progressBar.style.width = '100%'; // Start full
+
+    // Delay to let the browser process width change, then start animation
+    setTimeout(() => {
+      progressBar.style.transition = 'width 5s linear'; // Enable transition
+      progressBar.style.width = '0'; // Shrink to 0 over 5 seconds
+    }, 100); // Short delay to allow DOM update
+
+    // Automatically hide the alert after 5 seconds
+    setTimeout(() => {
+      alertBox.classList.add('hidden');
+    }, 5100); // Delay slightly longer than the transition
+  }
+
+  // Close the alert when the close button is clicked
+  closeButton.addEventListener('click', () => {
+    alertBox.classList.add('hidden');
+  });
+
+  showAlert();
 
   function formatDate(dateString) {
     const date = new Date(dateString);
