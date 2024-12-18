@@ -102,6 +102,11 @@ class User extends Authenticatable
         return $this->hasMany(Department::class, 'pemimpin_id');
     }
 
+    public function approvePP()
+    {
+        return $this->hasMany(PermintaanPembelian::class, 'pemimpin_id');
+    }
+
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {

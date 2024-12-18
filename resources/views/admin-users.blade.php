@@ -241,7 +241,7 @@
             </table>
         </div>
         <!-- Add Modal Structure -->
-        <div id="add-user-modal" tabindex="-1" class="fixed inset-0 z-50 hidden overflow-y-auto overflow-x-hidden h-[calc(100%-1rem)] max-h-full">
+        <div id="add-user-modal" tabindex="-1" data-modal-backdrop="static" class="fixed inset-0 z-50 hidden overflow-y-auto overflow-x-hidden h-[calc(100%-1rem)] max-h-full">
             <div class="relative p-4 w-full max-w-md max-h-full mx-auto">
                 <!-- Modal content -->
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700"> <!-- Using dark:bg-gray-700 -->
@@ -270,6 +270,17 @@
                                 <label for="username" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Username</label>
                                 <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
                             </div>
+							<div class="mb-4">
+                                <label for="department" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Department</label>
+                                <select name="department_id" id="edit-department" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                    <option value="">
+                                        Select Department
+                                    </option>
+                                    @foreach ($departments as $department)
+                                    <option value="{{$department->id}}">{{$department->nama}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="mb-4">
                                 <label for="role" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Role</label>
                                 <select name="role" id="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
@@ -289,7 +300,7 @@
         </div>
 
         <!-- Edit User Modal -->
-        <div id="edit-user-modal" tabindex="-1" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
+        <div id="edit-user-modal" tabindex="-1" data-modal-backdrop="static" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
             <div class="relative w-full max-w-3xl max-h-[90vh] bg-white rounded-lg shadow dark:bg-gray-700 overflow-y-auto">
                 <!-- Modal Content -->
                 <div class="relative h-full flex flex-col">
@@ -338,6 +349,7 @@
                                         Select Department
                                     </option>
                                     @foreach ($departments as $department)
+                                  
                                     <option value="{{$department->id}}">{{$department->nama}}</option>
                                     @endforeach
                                 </select>
@@ -376,7 +388,7 @@
         </div>
 
         <!-- Delete User Modal -->
-        <div id="deleteModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div id="deleteModal" tabindex="-1" data-modal-backdrop="static" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="relative p-4 w-full max-w-md max-h-full">
                 <!-- Modal content -->
                 <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">

@@ -177,7 +177,7 @@
 
                             <input id="edit-tahun" class="border border-gray-300 dark:border-gray-600 w-full p-2 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500" type="month" value="{{ $monthValue }}" required name="tahun_masuk">
                         </div>
-                        <div class="mb-4">
+                        <!-- <div class="mb-4">
                             <label class="block font-semibold text-gray-700 dark:text-gray-300">Department:</label>
                             <select id="edit-department" name="department_id" class="border border-gray-300 dark:border-gray-600 w-full p-2 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                                 <option value="" disabled selected>Select Department</option>
@@ -185,18 +185,19 @@
 
                                 @if ($user->department_id == $department->id)
                                 <option value="{{ $department->id }}" selected>{{ $department->nama }}</option>
-                                @endif
-
+                  
+				@else
                                 <option value="{{ $department->id }}">{{ $department->nama }}</option>
+				@endif
                                 @endforeach
                             </select>
-                        </div>
+                        </div> -->
                         <div class="mb-4">
                             <label class="block font-semibold text-gray-700 dark:text-gray-300">Signature:</label>
                             <input id="edit-signature" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" type="file" name="signature" accept="image/*">
                             @if($user->ttd)
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Current Signature: </p>
-                            <img src="{{ asset('storage/' . $user->ttd) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
+                            <img src="{{ asset('public/storage/' . $user->ttd) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
                             @endif
                         </div>
                     </div>

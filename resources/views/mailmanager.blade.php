@@ -38,7 +38,7 @@
               <table cellspacing="0" cellpadding="0" style="margin: auto;">
                 <tr>
                   <td style="background-color: #345C72; padding: 10px 20px; border-radius: 5px; text-align: center;">
-                    <a href="http://127.0.0.1:8000/approval/permintaan/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Detail Data</a>
+                    <a href="http://192.168.4.222:8081/e-form/approval/permintaan/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Detail Data</a>
                   </td>
                 </tr>
               </table>

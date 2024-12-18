@@ -34,16 +34,55 @@
                 <p class="text-md sm:text-lg text-gray-600 dark:text-gray-400">{{ $berita->detail_barang->type->name }} {{ $berita->detail_barang->brand->name }} ({{$berita->detail_barang->spesifikasi}})</p>
             </div>
 
+            @if (Auth::user()->department->nama === 'PURCHASING')
+            <div class="mb-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-300 mb-4">Data Pembelian</h2>
+
+                <div class="mb-4">
+                    <div class="flex justify-start gap-24">
+                        <p class="text-md sm:text-lg font-semibold text-gray-800 dark:text-gray-300 mb-1">
+                            Nomor PP: <span class="text-gray-600 dark:text-gray-400 font-normal"> {{ $berita->pembelian->pp }}</span>
+                        </p>
+                        <p class="text-md sm:text-lg font-semibold text-gray-800 dark:text-gray-300 mb-1">
+                            Tanggal PP: <span class="text-gray-600 dark:text-gray-400 font-normal"> {{ $berita->pembelian->pp_date }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-start gap-24">
+                        <p class="text-md sm:text-lg font-semibold text-gray-800 dark:text-gray-300 mb-1">
+                            Nomor PO: <span class="text-gray-600 dark:text-gray-400 font-normal"> {{ $berita->pembelian->po }}</span>
+                        </p>
+                        <p class="text-md sm:text-lg font-semibold text-gray-800 dark:text-gray-300 mb-1">
+                            Tanggal PO: <span class="text-gray-600 dark:text-gray-400 font-normal"> {{ $berita->pembelian->po_date }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-start gap-24">
+                        <p class="text-md sm:text-lg font-semibold text-gray-800 dark:text-gray-300 mb-1">
+                            Nomor Surat Jalan: <span class="text-gray-600 dark:text-gray-400 font-normal"> {{ $berita->pembelian->sj }}</span>
+                        </p>
+                        <p class="text-md sm:text-lg font-semibold text-gray-800 dark:text-gray-300 mb-1">
+                            Tanggal Surat Jalan: <span class="text-gray-600 dark:text-gray-400 font-normal"> {{ $berita->pembelian->sj_date }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>          
+            @endif
+
             <div class="mb-6">
                 <p class="text-lg font-semibold text-gray-800 dark:text-gray-300">Gambar:</p>
                 @if ($berita->pengecekan->foto1 && !$berita->pengecekan->foto2)
                 <div class="flex justify-start">
-                    <img src="{{ asset('storage/' . $berita->pengecekan->foto1) }}" alt="gambar1" class="w-64 h-32 object-contain border dark:border-gray-600">
+                    <img src="{{ asset('public/storage/' . $berita->pengecekan->foto1) }}" alt="gambar1" class="w-64 h-32 object-contain border dark:border-gray-600">
                 </div>
                 @elseif ($berita->pengecekan->foto1 && $berita->pengecekan->foto2)
                 <div class="flex justify-start space-x-4">
-                    <img src="{{ asset('storage/' . $berita->pengecekan->foto1) }}" alt="gambar1" class="w-64 h-32 object-contain border dark:border-gray-600">
-                    <img src="{{ asset('storage/' . $berita->pengecekan->foto2) }}" alt="gambar2" class="w-64 h-32 object-contain border dark:border-gray-600">
+                    <img src="{{ asset('public/storage/' . $berita->pengecekan->foto1) }}" alt="gambar1" class="w-64 h-32 object-contain border dark:border-gray-600">
+                    <img src="{{ asset('public/storage/' . $berita->pengecekan->foto2) }}" alt="gambar2" class="w-64 h-32 object-contain border dark:border-gray-600">
                 </div>
                 @endif
             </div>

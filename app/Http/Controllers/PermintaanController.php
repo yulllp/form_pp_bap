@@ -26,7 +26,7 @@ class PermintaanController extends Controller
     {
         $leaders = Department::pluck('pemimpin_id')->toArray();
         // dd($leaders);
-        if (in_array(Auth::id(),$leaders) || Auth::user()->department->nama == 'IT') {
+        if ((in_array(Auth::id(),$leaders) && Auth::user()->department->nama != 'IT')) {
             return to_route('dashboard');
         }
 
@@ -37,6 +37,10 @@ class PermintaanController extends Controller
     public function store(Request $request)
     {
         $user_id = Auth::id();
+
+        if(!Auth::user()->department->leader) {
+            return back()->with('unfinished', 'Manager untuk user belum diassign');
+        }
 
         try {
             $validate = $request->validate([
@@ -74,8 +78,7 @@ class PermintaanController extends Controller
             $pp->save();
 
             $users = User::whereHas('department', function ($query) {
-                $query->where('name', 'IT')
-                    ->whereColumn('pemimpin_id', '!=', 'users.id'); // Exclude manager
+                $query->where('nama', 'IT');
             })->get();
 
             $msg = $pp;
@@ -98,23 +101,21 @@ class PermintaanController extends Controller
         $leaders = Department::pluck('pemimpin_id')->toArray();
         $dataPP = PermintaanPembelian::with(['user', 'barang', 'pt_tujuan'])->findOrFail($id);
 
-        if (Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))) {
+        if(is_null($dataPP->user->department->leader)) {
+            return back()->with('unfinished', 'Manager untuk user belum diassign');
+        }
+
+        if (Auth::user()->department->nama != 'IT' && (Auth::id() != $dataPP->user->department->leader->id)) {
             return to_route('dashboard');
+        }
+
+        if (Auth::id() == $dataPP->user->department->leader->id && Auth::user()->department->nama != 'IT') {
+            if ($dataPP->status != 'acc-2' && $dataPP->status != 'acc1') {
+                return to_route('dashboard');
+            }
         }
 
         if ($dataPP->status == 'acc2') {
-            return to_route('dashboard');
-        }
-
-        if (($dataPP->status == 'acc0' || $dataPP->status == 'acc-1' || $dataPP->status == 'acc2') && in_array(Auth::id(),$leaders)) {
-            return to_route('dashboard');
-        }
-
-        if ($dataPP->status == 'acc2' && Auth::user()->department->nama != 'IT') {
-            return to_route('dashboard');
-        }
-
-        if ($dataPP->user->department_id != Auth::user()->department->leader->department_id && in_array(Auth::id(),$leaders)) {
             return to_route('dashboard');
         }
 
@@ -132,7 +133,7 @@ class PermintaanController extends Controller
             return to_route('dashboard');
         }
 
-        if (Auth::user()->department->nama == 'IT' || in_array(Auth::id(),$leaders)) {
+        if (Auth::user()->department->nama == 'IT' || in_array(Auth::id(), $leaders)) {
             return to_route('dashboard');
         }
 
@@ -146,8 +147,11 @@ class PermintaanController extends Controller
 
     public function update(Request $request, $id)
     {
+        $cek = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang', 'approval'])->findOrFail($id);
         $leaders = Department::pluck('pemimpin_id')->toArray();
-        if (Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))) {
+        $leader_id = Department::where('nama', 'IT')->pluck('pemimpin_id')->first();
+
+        if (Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(), $leaders))) {
             try {
                 $validated = $request->validate([
                     'pt_tujuan_id' => 'required|exists:pt_tujuans,id',
@@ -173,130 +177,182 @@ class PermintaanController extends Controller
 
                 $dataArray = json_decode($validated['dataArray'], true);
 
-                if (!is_array($dataArray) || count($dataArray) < 1) {
+                if ((!is_array($dataArray) || count($dataArray) < 1) && $validated['status'] != 'simpan' && $validated['status'] != 'disapprove') {
                     throw ValidationException::withMessages(['dataArray' => ['The data must contain at least one item.']]);
                 }
 
-                foreach ($dataArray as $index => $data) {
-                    // Validate each item in the dataArray
-                    $validator = Validator::make($data, [
-                        'nama' => 'required|string',
-                        'jumlah' => 'required|numeric',
-                        'satuan' => 'required|string',
-                        'tanggal_diperlukan' => 'required|date_format:d-m-Y',
-                        'keterangan_it' => 'required|string',
-                    ]);
+                if (!empty($dataArray)) {
+                    foreach ($dataArray as $index => $data) {
+                        // Validate each item in the dataArray
+                        $validator = Validator::make($data, [
+                            'nama' => 'required|string',
+                            'jumlah' => 'required|numeric',
+                            'satuan' => 'required|string',
+                            'tanggal_diperlukan' => 'required|date_format:d-m-Y',
+                            'keterangan_it' => 'required|string',
+                        ]);
 
-                    if ($validator->fails()) {
-                        // Handle validation errors for this specific item
-                        throw ValidationException::withMessages([$index => $validator->errors()->all()]);
+                        if ($validator->fails()) {
+                            // Handle validation errors for this specific item
+                            throw ValidationException::withMessages([$index => $validator->errors()->all()]);
+                        }
+
+                        // If validation passes, you can store the validated item
+                        $validatedData[] = $data;
                     }
 
-                    // If validation passes, you can store the validated item
-                    $validatedData[] = $data;
-                }
+                    // Retrieve existing barang records related to the given pp_id
+                    $existingBarangs = Barang::with('permintaan_pembelian')->where('pp_id', $id)->get();
 
-                // Retrieve existing barang records related to the given pp_id
-                $existingBarangs = Barang::with('permintaan_pembelian')->where('pp_id', $id)->get();
+                    // Create an array of existing barang IDs for comparison
+                    $existingBarangIds = $existingBarangs->pluck('id')->toArray();
+                    $idsToDelete = $existingBarangIds;
+                    $updatedIds = [];
 
-                // Create an array of existing barang IDs for comparison
-                $existingBarangIds = $existingBarangs->pluck('id')->toArray();
-                $idsToDelete = $existingBarangIds;
-                $updatedIds = [];
+                    // Iterate over the provided data array to update or create records
+                    foreach ($validatedData as $data) {
+                        $barangId = $data['id'] ?? '';
+                        $tanggalDiperlukan = \DateTime::createFromFormat('d-m-Y', $data['tanggal_diperlukan'])->format('Y-m-d');
 
-                // Iterate over the provided data array to update or create records
-                foreach ($validatedData as $data) {
-                    $barangId = $data['id'] ?? '';
-                    $tanggalDiperlukan = \DateTime::createFromFormat('d-m-Y', $data['tanggal_diperlukan'])->format('Y-m-d');
-
-                    if ($barangId) {
-                        // Update the existing barang if the ID exists
-                        $barang = Barang::find($barangId);
-                        if ($barang) {
-                            $barang->update([
+                        if ($barangId) {
+                            // Update the existing barang if the ID exists
+                            $barang = Barang::find($barangId);
+                            if ($barang) {
+                                $barang->update([
+                                    'nama' => $data['nama'],
+                                    'jumlah' => $data['jumlah'],
+                                    'satuan' => $data['satuan'],
+                                    'tanggal_diperlukan' => $tanggalDiperlukan,
+                                    'keterangan_it' => $data['keterangan_it']
+                                ]);
+                                // Mark this ID as updated
+                                $updatedIds[] = $barangId;
+                                // Remove this ID from the delete list
+                                $idsToDelete = array_diff($idsToDelete, [$barangId]);
+                            }
+                        } else {
+                            // Create a new barang if the ID is empty
+                            $newBarang = Barang::create([
+                                'pp_id' => $id,
                                 'nama' => $data['nama'],
                                 'jumlah' => $data['jumlah'],
                                 'satuan' => $data['satuan'],
                                 'tanggal_diperlukan' => $tanggalDiperlukan,
                                 'keterangan_it' => $data['keterangan_it']
                             ]);
-                            // Mark this ID as updated
-                            $updatedIds[] = $barangId;
-                            // Remove this ID from the delete list
-                            $idsToDelete = array_diff($idsToDelete, [$barangId]);
+                            // Mark the new ID as updated
+                            $updatedIds[] = $newBarang->id;
                         }
-                    } else {
-                        // Create a new barang if the ID is empty
-                        $newBarang = Barang::create([
-                            'pp_id' => $id,
-                            'nama' => $data['nama'],
-                            'jumlah' => $data['jumlah'],
-                            'satuan' => $data['satuan'],
-                            'tanggal_diperlukan' => $tanggalDiperlukan,
-                            'keterangan_it' => $data['keterangan_it']
-                        ]);
-                        // Mark the new ID as updated
-                        $updatedIds[] = $newBarang->id;
+                    }
+
+                    // Delete any IDs that are not in the updated list
+                    foreach ($idsToDelete as $idToDelete) {
+                        if (!in_array($idToDelete, $updatedIds)) {
+                            Barang::destroy($idToDelete);
+                        }
                     }
                 }
 
-                // Delete any IDs that are not in the updated list
-                foreach ($idsToDelete as $idToDelete) {
-                    if (!in_array($idToDelete, $updatedIds)) {
-                        Barang::destroy($idToDelete);
-                    }
+                if (Auth::id() == $cek->user_id) {
+                    $val = $request->validate([
+                        'pt_tujuan_id' => 'required|exists:pt_tujuans,id',
+                        'alasan' => 'required|string'
+                    ]);
+                    $dataPP = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang', 'approval'])->findOrFail($id);
+                    $dataPP->pt_tujuan_id = $val['pt_tujuan_id'];
+                    $dataPP->alasan = $val['alasan'];
+                    $dataPP->save();
                 }
 
                 if ($validated['status'] == 'approve') {
                     $dataPP = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang', 'approval'])->findOrFail($id);
-                    $dataPP->status = 'acc1';
-                    $dataPP->it_confirm_date = Carbon::now();
-                    $dataPP->revision_user = null;
-                    $dataPP->approval_id = Auth::user()->id;
-                    $dataPP->save();
+                    if ($leader_id == Auth::id() && Auth::user()->department->nama == 'IT' && $dataPP->user->department->nama == 'IT') {
+                        $dataPP->status = 'acc2';
+                        $dataPP->it_confirm_date = Carbon::now();
+                        $dataPP->manager_confirm_date = Carbon::now();
+                        $dataPP->revision_user = null;
+                        $dataPP->revision_it = null;
+                        $dataPP->approval_id = Auth::user()->id;
+                        $dataPP->save();
 
-                    $to = $dataPP->user->email;
-                    $msg = $dataPP;
-                    $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+                        $to = $dataPP->user->email;
+                        $msg = $dataPP;
+                        $subject = "Pengajuan Permintaan Pembelian Internal - IT";
 
-                    Mail::to($to)->send(new ApproveMailIT($msg, $subject));
+                        Mail::to($to)->send(new AccMailManagerforUser($msg, $subject));
 
-                    $to = $dataPP->user->department->leader->email;
-                    $msg = $dataPP;
-                    $subject = "Pengajuan Permintaan Pembelian Internal - IT";
-                    Mail::to($to)->send(new ToMailManager($msg, $subject));
+                        return redirect()->route('history', $id)->with('success', 'Permintaan pembelian diapprove!');
+                    } else {
+                        $dataPP->status = 'acc1';
+                        $dataPP->it_confirm_date = Carbon::now();
+                        $dataPP->revision_user = null;
+                        $dataPP->approval_id = Auth::user()->id;
+                        $dataPP->save();
 
-                    return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian diapprove!');
+                        $to = $dataPP->user->email;
+                        $msg = $dataPP;
+                        $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+                        Mail::to($to)->send(new ApproveMailIT($msg, $subject));
+
+                        $to = $dataPP->user->department->leader->email;
+                        $msg = $dataPP;
+                        $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+                        Mail::to($to)->send(new ToMailManager($msg, $subject));
+
+                        return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian diapprove!');
+                    }
                 } elseif ($validated['status'] == 'disapprove') {
                     $dataPP = PermintaanPembelian::with(['user', 'pt_tujuan', 'barang', 'approval'])->findOrFail($id);
-                    $dataPP->status = 'acc-1';
-                    $dataPP->it_confirm_date = Carbon::now();
-                    $revisi = $request->validate([
-                        'revisi' => 'required|string'
-                    ]);
-                    $dataPP->revision_user = $revisi['revisi'];
-                    $dataPP->approval_id = Auth::user()->id;
-                    $dataPP->save();
+                    if ($leader_id == Auth::id() && Auth::user()->department->nama == 'IT' && $dataPP->user->department->nama == 'IT') {
+                        $dataPP->status = 'acc-2';
+                        $dataPP->it_confirm_date = Carbon::now();
+                        $dataPP->manager_confirm_date = Carbon::now();
+                        $revisi = $request->validate([
+                            'revisi' => 'required|string'
+                        ]);
+                        $dataPP->revision_user = $revisi['revisi'];
+                        $dataPP->revision_it = $revisi['revisi'];
+                        $dataPP->approval_id = Auth::user()->id;
+                        $dataPP->save();
 
-                    $to = $dataPP->user->email;
-                    $msg = $dataPP;
-                    $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+                        $to = $dataPP->user->email;
+                        $msg = $dataPP;
+                        $subject = "Pengajuan Permintaan Pembelian Internal - IT";
 
-                    Mail::to($to)->send(new ApproveMailIT($msg, $subject));
-                    return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian disapprove!');
+                        Mail::to($to)->send(new AccMailManagerforUser($msg, $subject));
+
+                        return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian disapprove!');
+                    } else {
+                        $dataPP->status = 'acc-1';
+                        $dataPP->it_confirm_date = Carbon::now();
+                        $revisi = $request->validate([
+                            'revisi' => 'required|string'
+                        ]);
+                        $dataPP->revision_user = $revisi['revisi'];
+                        $dataPP->approval_id = Auth::user()->id;
+                        $dataPP->save();
+
+                        $to = $dataPP->user->email;
+                        $msg = $dataPP;
+                        $subject = "Pengajuan Permintaan Pembelian Internal - IT";
+
+                        Mail::to($to)->send(new ApproveMailIT($msg, $subject));
+                        return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian disapprove!');
+                    }
                 }
 
                 return redirect()->route('ongoing', $id)->with('success', 'Permintaan pembelian berhasil tersimpan.');
             } catch (\Exception $e) {
                 return back()->withErrors(['error' => $e->getMessage()]);
             }
-        } elseif (in_array(Auth::id(),$leaders)) {
+        } elseif (in_array(Auth::id(), $leaders)) {
             $validated = $request->validate([
                 'status' => 'required|string',
             ]);
 
             if ($validated['status'] == 'approve') {
-                $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
+                $dataPP = PermintaanPembelian::with(['user', 'barang', 'approval'])->findOrFail($id);
                 $dataPP->status = 'acc2';
                 $dataPP->manager_confirm_date = Carbon::now();
                 $dataPP->revision_it = null;
@@ -316,7 +372,7 @@ class PermintaanController extends Controller
 
                 return redirect()->route('history', $id)->with('success', 'Permintaan pembelian diapprove!');
             } elseif ($validated['status'] == 'disapprove') {
-                $dataPP = PermintaanPembelian::with(['user', 'barang'])->findOrFail($id);
+                $dataPP = PermintaanPembelian::with(['user', 'barang', 'approval'])->findOrFail($id);
                 $dataPP->status = 'acc-2';
                 $dataPP->manager_confirm_date = Carbon::now();
                 $revisi = $request->validate([
@@ -342,7 +398,8 @@ class PermintaanController extends Controller
         }
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $data = PermintaanPembelian::findOrFail($id);
         $data->delete();
 

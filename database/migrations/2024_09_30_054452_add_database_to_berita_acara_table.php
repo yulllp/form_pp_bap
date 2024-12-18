@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('nomor');
             $table->string('pembuat_id');
             $table->string('penerima_id');
-            $table->timestamp('tanggal_dibuat');
+            $table->timestamp('tanggal_dibuat')->nullable();
             $table->string('detail_barang_id');
             $table->string('pembelian_id');
             $table->string('pengecekan_id');

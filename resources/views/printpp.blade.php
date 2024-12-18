@@ -180,7 +180,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($pp->barang->reverse() as $key => $data)
+                @foreach($pp->barang as $key => $data)
+
                     <tr>
                         <td>{{ $key + 1 }}</td> <!-- Row number -->
                         <td>{{ $data->nama ?? 'DISI OLEH IT' }}</td>

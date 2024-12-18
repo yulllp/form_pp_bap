@@ -10,8 +10,6 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
-use function Termwind\style;
-
 class AccMailManagerforIT extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;

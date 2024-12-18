@@ -24,9 +24,9 @@
             <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
               Halo, {{$msg->user->name}}! <br>
               @if($msg->status == 'acc2')
-              Pengajuan Permintaan Pembelian Internal anda di APPROVE oleh Managaer ({{$msg->user->depatment->leader->name}} - Manager), Pada tanggal {{$msg->manager_confirm_date}}.
+              Pengajuan Permintaan Pembelian Internal anda di APPROVE oleh Managaer ({{$msg->user->department->leader->name}} - Manager), Pada tanggal {{$msg->manager_confirm_date}}.
               @elseif($msg->status == 'acc-2')
-              Pengajuan Permintaan Pembelian Internal anda di DISAPPROVE oleh Manager ({{$msg->user->depatment->leader->name}} - Manager), Pada tanggal {{$msg->manager_confirm_date}}.
+              Pengajuan Permintaan Pembelian Internal anda di DISAPPROVE oleh Manager ({{$msg->user->department->leader->name}} - Manager), Pada tanggal {{$msg->manager_confirm_date}}.
               @endif
               <br><br>
               @if($msg->status == 'acc2')
@@ -45,9 +45,9 @@
                 <tr>
                   <td style="background-color: #345C72; padding: 10px 20px; border-radius: 5px; text-align: center;">
                     @if($msg->status == 'acc2')
-                    <a href="http://127.0.0.1:8000/printpp/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat data yang diapprove</a>
+                    <a href="http://192.168.4.222:8081/e-form/printpp/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat data yang diapprove</a>
                     @elseif($msg->status == 'acc-2')
-                    <a href="http://127.0.0.1:8000/ongoing" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Cek status data</a>
+                    <a href="http://192.168.4.222:8081/e-form/ongoing" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Cek status data</a>
                     @endif
                   </td>
                 </tr>

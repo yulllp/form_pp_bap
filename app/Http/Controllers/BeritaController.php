@@ -145,7 +145,7 @@ class BeritaController extends Controller
             $beritaacara->save();
 
             $purchasing = User::whereHas('department', function ($query) {
-                $query->where('nama', 'purchasing');
+                $query->where('nama', 'PURCHASING');
             })->get();
 
             // dd($purchasing);
@@ -189,7 +189,7 @@ class BeritaController extends Controller
     public function onGoingIndex()
     {
         $title = "On Going - BAP";
-        if (in_array(Auth::user()->department->nama, ['IT', 'purchasing'])) {
+        if (in_array(Auth::user()->department->nama, ['IT', 'PURCHASING'])) {
             // Show all except status 'acc3' for IT or purchasing departments
             $beritas = BeritaAcara::with('penerima', 'pembuat')
                 ->whereNot('status', 'acc3')
@@ -228,7 +228,7 @@ class BeritaController extends Controller
     public function historyIndex()
     {
         $title = "History - BAP";
-        if (in_array(Auth::user()->department->nama, ['IT', 'purchasing'])) {
+        if (in_array(Auth::user()->department->nama, ['IT', 'PURCHASING'])) {
             // Show all except status 'acc3' for IT or purchasing departments
             $beritas = BeritaAcara::with('penerima', 'pembuat')
                 ->where('status', 'acc3')
@@ -372,7 +372,7 @@ class BeritaController extends Controller
             }
             if ($status !== 'acc0') {
                 $purchasing = User::whereHas('department', function ($query) {
-                    $query->where('nama', 'purchasing');
+                    $query->where('nama', 'PURCHASING');
                 })->get();
 
                 $msg = $beritaacara;
@@ -401,7 +401,7 @@ class BeritaController extends Controller
     {
         $berita = BeritaAcara::with('penerima', 'pembuat', 'detail_barang', 'pembelian', 'pengecekan')->find($id);
         if ($berita->status === 'acc0') {
-            if (Auth::user()->department && Auth::user()->department->nama === 'purchasing') {
+            if (Auth::user()->department && strtolower(Auth::user()->department->nama) === 'purchasing') {
                 $title = 'Approval BAP';
                 return view('bap-approve', ['berita' => $berita, 'title' => $title]);
             } else {

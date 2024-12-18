@@ -34,10 +34,10 @@
                         <td style="padding: 0px 40px; text-align: center;">
                             <div style="text-align: center;">
                                 <div style="background-color: #345C72; padding: 10px 20px; border-radius: 5px; margin-bottom: 10px;">
-                                    <a href="http://127.0.0.1:8000/printbap/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat Detail</a>
+                                    <a href="http://192.168.4.222:8081/e-form/printbap/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat Detail</a>
                                 </div>
                                 <div style="background-color: #345C72; padding: 10px 20px; border-radius: 5px;">
-                                    <a href="http://127.0.0.1:8000/bap/approve/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Approve disini</a>
+                                    <a href="http://192.168.4.222:8081/e-form/bap/approve/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Approve disini</a>
                                 </div>
                             </div>
                         </td>

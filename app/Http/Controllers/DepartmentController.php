@@ -21,7 +21,7 @@ class DepartmentController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|max:255',
-            'manager' => 'required|string'
+            'manager' => 'nullable|string'
         ]);
 
         try {
@@ -38,7 +38,7 @@ class DepartmentController extends Controller
     public function update(Request $request, $id){
         $validated = $request->validate([
             'name' => 'required|max:255',
-            'manager_id' => 'required|string',
+            'manager_id' => 'nullable|string',
             'status' => 'required|string'
         ]);
 

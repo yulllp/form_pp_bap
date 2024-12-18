@@ -23,6 +23,27 @@
     </div>
     @endif
 
+    @if (session('unfinished'))
+    <div id="success-alert" class="relative flex w-full items-center p-4 mb-4 text-green-800 border border-green-300 bg-green-50 dark:text-green-400 dark:bg-gray-800 dark:border-green-800 rounded-md shadow-sm" role="alert">
+      <div id="progress-bar" class="absolute top-0 left-0 h-1 bg-green-500 rounded-t-md" style="width: 100%; transition: width 5s linear;"></div>
+
+      <svg class="flex-shrink-0 w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+      </svg>
+
+      <div class="ml-3 text-sm font-medium">
+        {{ session('unfinished') }}
+      </div>
+
+      <button type="button" id="close-alert" class="absolute top-2 right-2 bg-green-50 text-green-500 rounded-lg p-1.5 hover:bg-green-200 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+    @endif
+
     <div class="overflow-auto shadow-md sm:rounded-lg">
       <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -96,7 +117,7 @@
             </td>
             @endif
             <td class="px-6 py-4 flex space-x-3">
-              <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal" data-original-icon data-status="{{ $data->status }}" data-create="{{ $data->created_at }}" data-confirm-it="{{ $data->it_confirm_date }}" data-confirm-manager="{{ $data->manager_confirm_date }}" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+              <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal" data-original-icon data-status="{{ $data->status }}" data-create="{{ $data->created_at }}" data-confirm-it="{{ $data->it_confirm_date }}" data-confirm-manager="{{ $data->manager_confirm_date }}" data-approval="{{ $data->approval->name ?? 'Not Approved' }}" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                 Status
               </button>
               @if ((Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))) && ($data->status == 'acc0' || $data->status == 'acc-1'))
@@ -118,8 +139,8 @@
                   Details
                 </button>
               </a>
-              @if ((Auth::user()->department->nama != 'IT' && !(in_array(Auth::id(),$leaders))) && ($data->status == 'acc0' || $data->status == 'acc-1'))
-              <button data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" type="button">
+              @if ((Auth::id() == $data->user_id && !(in_array(Auth::id(),$leaders))) && ($data->status == 'acc0' || $data->status == 'acc-1'))
+              <button data-modal-target="popup-modal" data-modal-toggle="popup-modal" data-delete-id="{{ $data->id }}" class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" type="button">
                 Delete
               </button>
               @endif
@@ -143,7 +164,7 @@
                 <h3 id="modalMessage" class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Apakah anda yakin untuk menghapus data ini?</h3>
                 <div class="flex space-x-2 justify-center">
                   <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-red-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
-                  <form action="{{ route("delete.permintaan", $data->id) }}" method="post" class="m-0 p-0">
+                  <form id='deleteForm' action="" method="post" class="m-0 p-0">
                     @csrf
                     @method('DELETE')
                     <button data-modal-hide="popup-modal" type="submit" class="ms-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
@@ -218,12 +239,24 @@
 </x-layout>
 
 <script>
+document.querySelectorAll('[data-delete-id]').forEach(button => {
+  button.addEventListener('click', function() {
+    const id = this.getAttribute('data-delete-id');
+    console.log(id);
+    const deleteForm = document.getElementById('deleteForm');
+    if (deleteForm) {
+      deleteForm.action = "{{ route('delete.permintaan', ':id') }}".replace(':id', id);
+    }
+  });
+});
+
   document.querySelectorAll('button[data-modal-target="timeline-modal"]').forEach(button => {
     button.addEventListener('click', function() {
       const status = this.getAttribute('data-status');
       let created_at = formatDate(this.getAttribute('data-create'));
       let it_confirm_date = formatDate(this.getAttribute('data-confirm-it'));
       let manager_confirm_date = formatDate(this.getAttribute('data-confirm-manager'));
+      let approval = this.getAttribute('data-approval');
 
       document.querySelectorAll('.step').forEach(step => {
         step.querySelector('span').className = 'absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700';
@@ -236,15 +269,15 @@
         setDefault(2, 'Menunggu konfirmasi dari Manager', 'Data masih diproses IT');
       } else if (status === 'acc1') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
+        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date} oleh ${approval}`);
         setStepInProgress2(2, 'Menunggu konfirmasi dari Manager', 'Data sedang diproses manager');
       } else if (status === 'acc2') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
-        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date}`);
+        setStepComplete(1, 'Konfirmasi dari Pihak IT selesai', `Data dikonfirm pada ${it_confirm_date} oleh ${approval}`);
         setStepComplete(2, 'Konfirmasi dari Manager selesai', `Data dikonfirm pada ${manager_confirm_date}`);
       } else if (status === 'acc-1') {
         setStepInProgress1(0, 'Terdapat kesalahan pada data user', 'Menunggu revisi data user');
-        displayRedCross(1, 'Permintaan ditolak oleh IT', `Data ditolak pada ${it_confirm_date}. Silahkan menghubungi pihak IT`)
+        displayRedCross(1, 'Permintaan ditolak oleh IT', `Data ditolak pada ${it_confirm_date} oleh ${approval}. Silahkan menghubungi pihak IT`)
         setDefault(2, 'Menunggu konfirmasi dari Manager', 'Data masih diproses IT');
       } else if (status === 'acc-2') {
         setStepComplete(0, 'Data berhasil di upload', `Data dibuat pada ${created_at}`);
@@ -259,26 +292,30 @@
   const progressBar = document.getElementById('progress-bar');
 
   function showAlert() {
-    alertBox.classList.remove('hidden');
-    progressBar.style.transition = 'none'; // Disable transition to reset
-    progressBar.style.width = '100%'; // Start full
+    if (alertBox && progressBar) {
+      alertBox.classList.remove('hidden');
+      progressBar.style.transition = 'none'; // Disable transition to reset
+      progressBar.style.width = '100%'; // Start full
 
-    // Delay to let the browser process width change, then start animation
-    setTimeout(() => {
-      progressBar.style.transition = 'width 5s linear'; // Enable transition
-      progressBar.style.width = '0'; // Shrink to 0 over 5 seconds
-    }, 100); // Short delay to allow DOM update
+      // Delay to let the browser process width change, then start animation
+      setTimeout(() => {
+        progressBar.style.transition = 'width 5s linear'; // Enable transition
+        progressBar.style.width = '0'; // Shrink to 0 over 5 seconds
+      }, 100); // Short delay to allow DOM update
 
-    // Automatically hide the alert after 5 seconds
-    setTimeout(() => {
-      alertBox.classList.add('hidden');
-    }, 5100); // Delay slightly longer than the transition
+      // Automatically hide the alert after 5 seconds
+      setTimeout(() => {
+        alertBox.classList.add('hidden');
+      }, 5100); // Delay slightly longer than the transition
+    }
   }
 
   // Close the alert when the close button is clicked
-  closeButton.addEventListener('click', () => {
-    alertBox.classList.add('hidden');
-  });
+  if (closeButton) {
+    closeButton.addEventListener('click', () => {
+      alertBox.classList.add('hidden');
+    });
+  }
 
   showAlert();
 

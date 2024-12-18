@@ -45,9 +45,9 @@
                 <tr>
                   <td style="background-color: #345C72; padding: 10px 20px; border-radius: 5px; text-align: center;">
                     @if($msg->status == 'acc1')
-                    <a href="http://127.0.0.1:8000/printpp/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat data yang diapprove</a>
+                    <a href="http://192.168.4.222:8081/e-form/printpp/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat data yang diapprove</a>
                     @elseif($msg->status == 'acc-1')
-                    <a href="http://127.0.0.1:8000/edit/permintaan/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Cek data yang perlu direvisi</a>
+                    <a href="http://192.168.4.222:8081/e-form/edit/permintaan/{{$msg->id}}" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Cek data yang perlu direvisi</a>
                     @endif
                   </td>
                 </tr>

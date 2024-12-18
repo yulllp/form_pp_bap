@@ -22,6 +22,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|max:255',
             'username' => 'required|max:255|unique:users,username',
+			'department_id' => 'nullable|string',
             'role' => 'required|string'
         ]);
 
@@ -29,6 +30,7 @@ class UserController extends Controller
             $user = new User();
             $user->name = $validated['name'];
             $user->username = $validated['username'];
+			$user->department_id = $validated['department_id'];
             $user->role = $validated['role'];
             $user->password = Hash::make('12345678');
             $user->save();
@@ -85,30 +87,17 @@ class UserController extends Controller
             $user->ttd = $filePath;
         }
 
-        // Only update fields if they are not null
-        if (!is_null($credentials['name'])) {
             $user->name = $credentials['name'];
-        }
 
-        if (!is_null($credentials['username'])) {
             $user->username = $credentials['username'];
-        }
 
-        if (!is_null($credentials['email'])) {
             $user->email = $credentials['email'];
-        }
 
-        if (!is_null($credentials['jabatan'])) {
             $user->jabatan = $credentials['jabatan'];
-        }
 
-        if (!is_null($credentials['tahun_masuk'])) {
             $user->tahun_masuk = $credentials['tahun_masuk'];
-        }
 
-        if (!is_null($credentials['department_id'])) {
             $user->department_id = $credentials['department_id'];
-        }
 
         if (!is_null($credentials['password'])) {
             $user->password = $credentials['password'];

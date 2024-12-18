@@ -15,13 +15,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // DepartmentSeeder::class,
-            // UserSeeder::class,
-            // PtTujuanSeeder::class
+             DepartmentSeeder::class,
+            UserSeeder::class,
+             PtTujuanSeeder::class,
             BrandSeeder::class,
             TypeSeeder::class,
-            // OSSeeder::class,
-            // OfficeSeeder::class
+             OSSeeder::class,
+             OfficeSeeder::class
         ]);
     }
 }

@@ -249,14 +249,14 @@
                     <label for="gambar1" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Gambar 1</label>
                     <input id="gambar1" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" type="file" name="gambar1" accept="image/*">
                     @if($berita->pengecekan->foto1)
-                    <img src="{{ asset('storage/' . $berita->pengecekan->foto1) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
+                    <img src="{{ asset('public/storage/' . $berita->pengecekan->foto1) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
                     @endif
                 </div>
                 <div class="mb-4">
                     <label for="gambar2" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Gambar 2</label>
                     <input id="gambar2" class="border w-full p-2 rounded-md dark:bg-gray-700 dark:text-gray-300" type="file" name="gambar2" accept="image/*">
                     @if($berita->pengecekan->foto2)
-                    <img src="{{ asset('storage/' . $berita->pengecekan->foto2) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
+                    <img src="{{ asset('public/storage/' . $berita->pengecekan->foto2) }}" alt="Signature" class="w-32 h-16 object-contain border dark:border-gray-600">
                     @endif
                 </div>
                 <div class="flex justify-between">

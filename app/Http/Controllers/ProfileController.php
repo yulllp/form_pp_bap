@@ -33,7 +33,6 @@ class ProfileController extends Controller
         'email' => 'required|string',
         'jabatan' => 'required|string',
         'tahun_masuk' => 'required|date',
-        'department_id' => 'required|string',
         'signature' => 'nullable|image|mimes:png|max:2048'
     ]);
 
@@ -66,7 +65,6 @@ class ProfileController extends Controller
     $user->email = $credentials['email'];
     $user->jabatan = $credentials['jabatan'];
     $user->tahun_masuk = $credentials['tahun_masuk'];
-    $user->department_id = $credentials['department_id'];
     
     // Save the user data
     $user->save();

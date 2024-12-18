@@ -256,12 +256,12 @@
                     </td>
                     <td colspan="38%" style="height: 100px;">
                         @if ($bap->pengecekan->foto1)
-                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pengecekan->foto1))); ?>">
+                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->pengecekan->foto1))); ?>">
                         @endif
                     </td>
                     <td colspan="37%" style="height: 100px;">
                         @if ($bap->pengecekan->foto2)
-                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pengecekan->foto2))); ?>">
+                        <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->pengecekan->foto2))); ?>">
                         @endif
                     </td>
                 </tr>
@@ -293,7 +293,7 @@
                 <tr>
                     @if ($bap->status === 'acc0')
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pembuat->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->pembuat->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
 
@@ -306,10 +306,10 @@
                     </td>
                     @elseif ($bap->status === 'acc1' || $bap->status === 'acc-2')
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pembuat->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->pembuat->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->purchasing->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->purchasing->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
 
@@ -319,29 +319,29 @@
                     </td>
                     @elseif ($bap->status === 'acc2' || $bap->status === 'acc-3')
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pembuat->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->pembuat->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->purchasing->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->purchasing->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->penerima->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->penerima->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
 
                     </td>
                     @elseif ($bap->status === 'acc3')
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->pembuat->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->pembuat->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->purchasing->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->purchasing->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->penerima->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->penerima->ttd))); ?>">
                     </td>
                     <td colspan="25%" style="height: 50px;">
-                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/' . $bap->penerima->department->leader->ttd))); ?>">
+                        <img class="ttd" src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('storage/' . $bap->penerima->department->leader->ttd))); ?>">
                     </td>
                     @endif
                 </tr>
